@@ -1,0 +1,27 @@
+---
+title: "preprocessing"
+author: "jvicentem"
+date: "31 July 2017"
+output: html_document
+---
+
+```{r setup, message=FALSE, warning=FALSE}
+source('utils.R')
+
+library(tidyverse)
+```
+
+```{r loading-data, message=FALSE, warning=FALSE}
+df <- load_data()
+
+df <- introduce_nas(df, 22.5, 'pH')
+```
+
+```{r missing-values-imputation}
+
+```
+
+```{r feature-engineering}
+
+```
+
