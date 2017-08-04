@@ -80,7 +80,12 @@ plot_boxplots(df)
 plot_joyplots(df)
 
 other_plots(df)
-      
+```
+
+```{r plots2}
+boxplots_quality_colour_wine(df, 'red')
+
+boxplots_quality_colour_wine(df, 'white')
 ```
 
 ```{r cors}
@@ -90,4 +95,6 @@ corrs
 
 corrplot.mixed(corrs, upper="ellipse", lower="number")
 ```
+
+
 

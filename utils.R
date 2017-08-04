@@ -365,3 +365,105 @@ other_plots <- function(df) {
   )
   
 }
+
+boxplots_quality_colour_wine <- function(df, colour) {
+  df$quality <- as.factor(df$quality)
+  
+  df <- df %>% filter(wine_colour == colour)
+  
+  print(
+    df %>%
+      select(quality, `fixed acidity`) %>%
+      group_by(quality) %>%
+      ggplot(aes(quality, `fixed acidity`)) +
+      geom_boxplot(aes(fill = quality)) 
+  )
+  
+  print(
+    df %>%
+      select(quality, `volatile acidity`) %>%
+      group_by(quality) %>%
+      ggplot(aes(quality, `volatile acidity`)) +
+      geom_boxplot(aes(fill = quality)) 
+  )
+  
+  print(
+    df %>%
+      select(quality, `citric acid`) %>%
+      group_by(quality) %>%
+      ggplot(aes(quality, `citric acid`)) +
+      geom_boxplot(aes(fill = quality)) 
+  )
+  
+  print(
+    df %>%
+      select(quality, `residual sugar`) %>%
+      group_by(quality) %>%
+      ggplot(aes(quality, `residual sugar`)) +
+      geom_boxplot(aes(fill = quality)) 
+  )
+  
+  print(
+    df %>%
+      select(quality, chlorides) %>%
+      group_by(quality) %>%
+      ggplot(aes(quality, chlorides)) +
+      geom_boxplot(aes(fill = quality)) 
+  )
+  
+  print(
+    df %>%
+      select(quality, `volatile acidity`) %>%
+      group_by(quality) %>%
+      ggplot(aes(quality, `volatile acidity`)) +
+      geom_boxplot(aes(fill = quality)) 
+  )
+  
+  print(
+    df %>%
+      select(quality, `free sulfur dioxide`) %>%
+      group_by(quality) %>%
+      ggplot(aes(quality, `free sulfur dioxide`)) +
+      geom_boxplot(aes(fill = quality)) 
+  )
+  
+  print(
+    df %>%
+      select(quality, `total sulfur dioxide`) %>%
+      group_by(quality) %>%
+      ggplot(aes(quality, `total sulfur dioxide`)) +
+      geom_boxplot(aes(fill = quality)) 
+  )
+  
+  print(
+    df %>%
+      select(quality, density) %>%
+      group_by(quality) %>%
+      ggplot(aes(quality, density)) +
+      geom_boxplot(aes(fill = quality)) 
+  )
+  
+  print(
+    df %>%
+      select(quality, pH) %>%
+      group_by(quality) %>%
+      ggplot(aes(quality, pH)) +
+      geom_boxplot(aes(fill = quality)) 
+  )
+  
+  print(
+    df %>%
+      select(quality, sulphates) %>%
+      group_by(quality) %>%
+      ggplot(aes(quality, sulphates)) +
+      geom_boxplot(aes(fill = quality)) 
+  )
+  
+  print(
+    df %>%
+      select(quality, alcohol) %>%
+      group_by(quality) %>%
+      ggplot(aes(quality, alcohol)) +
+      geom_boxplot(aes(fill = quality)) 
+  )  
+}
