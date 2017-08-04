@@ -376,7 +376,8 @@ boxplots_quality_colour_wine <- function(df, colour) {
       select(quality, `fixed acidity`) %>%
       group_by(quality) %>%
       ggplot(aes(quality, `fixed acidity`)) +
-      geom_boxplot(aes(fill = quality)) 
+      geom_boxplot(aes(fill = quality)) + 
+      ggtitle(paste(colour, ' wine'))
   )
   
   print(
@@ -384,7 +385,8 @@ boxplots_quality_colour_wine <- function(df, colour) {
       select(quality, `volatile acidity`) %>%
       group_by(quality) %>%
       ggplot(aes(quality, `volatile acidity`)) +
-      geom_boxplot(aes(fill = quality)) 
+      geom_boxplot(aes(fill = quality)) + 
+      ggtitle(paste(colour, ' wine')) 
   )
   
   print(
@@ -392,7 +394,8 @@ boxplots_quality_colour_wine <- function(df, colour) {
       select(quality, `citric acid`) %>%
       group_by(quality) %>%
       ggplot(aes(quality, `citric acid`)) +
-      geom_boxplot(aes(fill = quality)) 
+      geom_boxplot(aes(fill = quality)) + 
+      ggtitle(paste(colour, ' wine')) 
   )
   
   print(
@@ -400,7 +403,8 @@ boxplots_quality_colour_wine <- function(df, colour) {
       select(quality, `residual sugar`) %>%
       group_by(quality) %>%
       ggplot(aes(quality, `residual sugar`)) +
-      geom_boxplot(aes(fill = quality)) 
+      geom_boxplot(aes(fill = quality)) + 
+      ggtitle(paste(colour, ' wine')) 
   )
   
   print(
@@ -408,15 +412,8 @@ boxplots_quality_colour_wine <- function(df, colour) {
       select(quality, chlorides) %>%
       group_by(quality) %>%
       ggplot(aes(quality, chlorides)) +
-      geom_boxplot(aes(fill = quality)) 
-  )
-  
-  print(
-    df %>%
-      select(quality, `volatile acidity`) %>%
-      group_by(quality) %>%
-      ggplot(aes(quality, `volatile acidity`)) +
-      geom_boxplot(aes(fill = quality)) 
+      geom_boxplot(aes(fill = quality)) + 
+      ggtitle(paste(colour, ' wine')) 
   )
   
   print(
@@ -424,7 +421,8 @@ boxplots_quality_colour_wine <- function(df, colour) {
       select(quality, `free sulfur dioxide`) %>%
       group_by(quality) %>%
       ggplot(aes(quality, `free sulfur dioxide`)) +
-      geom_boxplot(aes(fill = quality)) 
+      geom_boxplot(aes(fill = quality)) + 
+      ggtitle(paste(colour, ' wine')) 
   )
   
   print(
@@ -432,7 +430,8 @@ boxplots_quality_colour_wine <- function(df, colour) {
       select(quality, `total sulfur dioxide`) %>%
       group_by(quality) %>%
       ggplot(aes(quality, `total sulfur dioxide`)) +
-      geom_boxplot(aes(fill = quality)) 
+      geom_boxplot(aes(fill = quality)) + 
+      ggtitle(paste(colour, ' wine')) 
   )
   
   print(
@@ -440,7 +439,8 @@ boxplots_quality_colour_wine <- function(df, colour) {
       select(quality, density) %>%
       group_by(quality) %>%
       ggplot(aes(quality, density)) +
-      geom_boxplot(aes(fill = quality)) 
+      geom_boxplot(aes(fill = quality)) + 
+      ggtitle(paste(colour, ' wine')) 
   )
   
   print(
@@ -448,7 +448,8 @@ boxplots_quality_colour_wine <- function(df, colour) {
       select(quality, pH) %>%
       group_by(quality) %>%
       ggplot(aes(quality, pH)) +
-      geom_boxplot(aes(fill = quality)) 
+      geom_boxplot(aes(fill = quality)) + 
+      ggtitle(paste(colour, ' wine')) 
   )
   
   print(
@@ -456,7 +457,8 @@ boxplots_quality_colour_wine <- function(df, colour) {
       select(quality, sulphates) %>%
       group_by(quality) %>%
       ggplot(aes(quality, sulphates)) +
-      geom_boxplot(aes(fill = quality)) 
+      geom_boxplot(aes(fill = quality)) + 
+      ggtitle(paste(colour, ' wine')) 
   )
   
   print(
@@ -464,6 +466,7 @@ boxplots_quality_colour_wine <- function(df, colour) {
       select(quality, alcohol) %>%
       group_by(quality) %>%
       ggplot(aes(quality, alcohol)) +
-      geom_boxplot(aes(fill = quality)) 
+      geom_boxplot(aes(fill = quality)) + 
+      ggtitle(paste(colour, ' wine')) 
   )  
 }
