@@ -9,6 +9,12 @@ output: html_document
 source('utils.R')
 
 library(tidyverse)
+
+library(VIM)
+
+library(mice)
+
+library(lattice)
 ```
 
 ```{r loading-data, message=FALSE, warning=FALSE}
@@ -18,10 +24,45 @@ df <- introduce_nas(df, 22.5, 'pH')
 ```
 
 ```{r missing-values-imputation}
+# With this histogram we check if there are patterns on missing values for all variable
+# and thus determine if the missing data occurs randomly or not.
+# In this case, it seems we have missing data at random.
+aggr_plot <- aggr(df, col=c('navyblue','red'), numbers=TRUE, sortVars=TRUE,
+              labels=names(df), cex.axis=.61, gap=0.8,
+              ylab=c("Histogram of missing data","Pattern"), cex.numbers=0.6, cex.lab = 0.7)
 
+# X Axis red points: 'total sulfur dioxide' missing values for 'pH' values
+# Y Axis red points: 'pH' missing values for 'total sulfur dioxide' values
+df %>% select(pH, `total sulfur dioxide`) %>% marginplot()
+# Only two missing values for 'total sulfur dioxide'
+# 'pH' missing values seem to be independent of 'total sulfur dioxide' missing values
+
+# For each imputation 3 different datasets will be generated
+# Missing values imputation using stochastic regression
+stoch_regr_imp <- mice(df, method = 'norm.nob', m = 3)
+
+densityplot(stoch_regr_imp)
+
+# stock_regr_data <- complete(stoch_regr_imp, action = 1)
+# stock_regr_data <- complete(stoch_regr_imp, action = 2)
+# stock_regr_data <- complete(stoch_regr_imp, action = 3)
+
+# Missing values imputation using predictive mean matching
+pmm_imp <- mice(df, method = 'fastpmm', m = 3)
+
+densityplot(pmm_imp)
+
+# pmm_data <- complete(pmm_imp, action = 1)
+# pmm_data <- complete(pmm_imp, action = 2)
+# pmm_data <- complete(pmm_imp, action = 3)
+
+# Using Knn (Gower distance) imputation method from VIM package
+df %>% select(pH, `total sulfur dioxide`) %>% kNN() %>% marginplot(., delimiter="_imp")
 ```
 
 ```{r feature-engineering}
+# I think the most relevant feature engineering tasks were made preaviously by creating the colour variable (there are significant differences between red wine and white wine). However, there are variables that don't seem to improve or make worse the quality of white wines.and maybe it would be interesting to categorize them or use other techniques such PCA or EFA.
 
+# First we should normalize and center the variables, including quality. After that, maybe we should redo the plots again.
 ```
 
