@@ -64,5 +64,7 @@ df %>% select(pH, `total sulfur dioxide`) %>% kNN() %>% marginplot(., delimiter=
 # I think the most relevant feature engineering tasks were made preaviously by creating the colour variable (there are significant differences between red wine and white wine). However, there are variables that don't seem to improve or make worse the quality of white wines.and maybe it would be interesting to categorize them or use other techniques such PCA or EFA.
 
 # First we should normalize and center the variables, including quality. After that, maybe we should redo the plots again.
+
+# Create variable which is the difference of free sulfur dioxide and total sulfur dioxide.
 ```
 
