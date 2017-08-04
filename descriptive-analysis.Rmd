@@ -23,7 +23,7 @@ df <- load_data()
 
 df <- introduce_nas(df, 22.5, 'pH')
 
-#pairs(~ quality + alcohol + sulphates + pH + density + `total sulfur dioxide` + `free sulfur dioxide` + chlorides + `residual sugar` + `citric acid` + `volatile acidity` + `fixed acidity`,data=df)
+
 ```
 
 # Data dictionary
@@ -78,6 +78,14 @@ plot_histograms(df)
 plot_boxplots(df)
 
 plot_joyplots(df)
+
+other_plots(df)
+```
+
+```{r plots2}
+boxplots_quality_colour_wine(df, 'red')
+
+boxplots_quality_colour_wine(df, 'white')
 ```
 
 ```{r cors}
@@ -87,4 +95,6 @@ corrs
 
 corrplot.mixed(corrs, upper="ellipse", lower="number")
 ```
+
+
 
