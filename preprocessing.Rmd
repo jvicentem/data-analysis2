@@ -15,6 +15,14 @@ library(VIM)
 library(mice)
 
 library(lattice)
+
+#source("https://bioconductor.org/biocLite.R")
+#biocLite("pcaMethods")
+library(pcaMethods)
+
+library(psych)
+
+library(GPArotation)
 ```
 
 ```{r loading-data, message=FALSE, warning=FALSE}
@@ -74,3 +82,48 @@ df %>% select(pH, `other sulfur dioxide`) %>% kNN() %>% marginplot(., delimiter=
 # Now we should use the function pool from mice library so the final predictor's values can be pooled from 
 # each model fitted to the multiple datasets generated from imputations. 
 ```
+
+```{r feature-selection-pca}
+# Do I need to choose a set of values generated for the variable with missing values?
+# Can I go on without imputing missing values?
+
+# By the moment, I'm gonna choose the 3rd set of values generated using predictive mean matching
+densityplot(pmm_imp, subset=.imp==3)
+
+pmm_data <- complete(pmm_imp, action = 3)
+
+pcaA <- pca(pmm_data %>% select(-quality, -wine_colour), scale = "uv", center = T, nPcs = length(names(pmm_data)) - 2, method = "svd")
+pcaA@R2
+pcaA@R2cum
+pcaA@loadings
+biplot(pcaA, scale = F)
+slplot(pcaA, scoresLoadings = c(T,T), scol = pmm_data$quality)
+
+pc_vars <- pcaA@sDev^2
+pc_var_ex <- pc_vars/sum(pc_vars)
+
+plot(pc_var_ex, xlab = "Principal Components",
+             ylab = "Proportion of Variance Explained",
+             type = "b")
+
+plot(cumsum(pc_var_ex), xlab = "Principal Component",
+              ylab = "Cumulative Proportion of Variance Explained",
+              type = "b")
+
+# With the first 6 PCAs we explain above 80% of the variance.
+```
+
+```{r feature-selection-efa}
+parallel <- fa.parallel(pmm_data %>% select(-quality, -wine_colour), fm = 'minres', fa = 'fa')
+
+efa <- fa(pmm_data %>% select(-quality, -wine_colour), nfactors = 4, rotate = "oblimin", fm="ml")
+
+print(efa$loadings,cutoff = 0.4)
+
+fa.diagram(efa)
+
+efa
+
+# RMSA is too big: this is a bad EFA, maybe I should change the value of nfactors, rotate and fm.
+```
+
