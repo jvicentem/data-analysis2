@@ -23,19 +23,31 @@ df <- load_data()
 df <- introduce_nas(df, 22.5, 'pH')
 ```
 
+```{r feature-engineering}
+# I think the most relevant feature engineering tasks were made previously by creating the colour variable (there are significant differences between red wine and white wine). However, there are variables that don't seem to improve or make worse the quality of white wines.and maybe it would be interesting to categorize them or use other techniques such PCA or EFA.
+
+# Create variable which is the difference of free sulfur dioxide and total sulfur dioxide.
+
+df <- df %>% 
+        mutate(`other sulfur dioxide` = `total sulfur dioxide` - `free sulfur dioxide`) %>%
+        select(-`total sulfur dioxide`)
+
+# I think normalization and centering variables should be done having in mind the models we're gonna apply.
+```
+
 ```{r missing-values-imputation}
 # With this histogram we check if there are patterns on missing values for all variable
 # and thus determine if the missing data occurs randomly or not.
 # In this case, it seems we have missing data at random.
 aggr_plot <- aggr(df, col=c('navyblue','red'), numbers=TRUE, sortVars=TRUE,
-              labels=names(df), cex.axis=.61, gap=0.8,
+              labels=names(df), cex.axis=.56, gap=0.8,
               ylab=c("Histogram of missing data","Pattern"), cex.numbers=0.6, cex.lab = 0.7)
 
-# X Axis red points: 'total sulfur dioxide' missing values for 'pH' values
-# Y Axis red points: 'pH' missing values for 'total sulfur dioxide' values
-df %>% select(pH, `total sulfur dioxide`) %>% marginplot()
-# Only two missing values for 'total sulfur dioxide'
-# 'pH' missing values seem to be independent of 'total sulfur dioxide' missing values
+# X Axis red points: 'other sulfur dioxide' missing values for 'pH' values
+# Y Axis red points: 'pH' missing values for 'other sulfur dioxide' values
+df %>% select(pH, `other sulfur dioxide`) %>% marginplot()
+# Only two missing values for 'other sulfur dioxide'
+# 'pH' missing values seem to be independent of 'other sulfur dioxide' missing values
 
 # For each imputation 3 different datasets will be generated
 # Missing values imputation using stochastic regression
@@ -56,15 +68,9 @@ densityplot(pmm_imp)
 # pmm_data <- complete(pmm_imp, action = 2)
 # pmm_data <- complete(pmm_imp, action = 3)
 
-# Using Knn (Gower distance) imputation method from VIM package
-df %>% select(pH, `total sulfur dioxide`) %>% kNN() %>% marginplot(., delimiter="_imp")
+# Using Knn (Gower distance) imputation method from VIM package (only one data set generated)
+df %>% select(pH, `other sulfur dioxide`) %>% kNN() %>% marginplot(., delimiter="_imp")
+
+# Now we should use the function pool from mice library so the final predictor's values can be pooled from 
+# each model fitted to the multiple datasets generated from imputations. 
 ```
-
-```{r feature-engineering}
-# I think the most relevant feature engineering tasks were made preaviously by creating the colour variable (there are significant differences between red wine and white wine). However, there are variables that don't seem to improve or make worse the quality of white wines.and maybe it would be interesting to categorize them or use other techniques such PCA or EFA.
-
-# First we should normalize and center the variables, including quality. After that, maybe we should redo the plots again.
-
-# Create variable which is the difference of free sulfur dioxide and total sulfur dioxide.
-```
-

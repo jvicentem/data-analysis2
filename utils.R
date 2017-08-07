@@ -69,9 +69,9 @@ plot_histograms <- function(df) {
   
   print(
     df %>%
-      select(`total sulfur dioxide`) %>%
+      select(`other sulfur dioxide`) %>%
       mutate(count = n()) %>%  
-      ggplot(aes(x = `total sulfur dioxide`)) +
+      ggplot(aes(x = `other sulfur dioxide`)) +
       geom_histogram(binwidth=10, colour="black", fill="white")
   )
   
@@ -159,9 +159,9 @@ plot_boxplots <- function(df) {
   
   print(
     df %>%
-      select(wine_colour, `total sulfur dioxide`) %>%
+      select(wine_colour, `other sulfur dioxide`) %>%
       group_by(wine_colour) %>%
-      ggplot(aes(wine_colour, `total sulfur dioxide`)) +
+      ggplot(aes(wine_colour, `other sulfur dioxide`)) +
       geom_boxplot(aes(fill = wine_colour)) 
   )
   
@@ -213,7 +213,7 @@ plot_joyplots <- function(df) {
   print(ggplot(df, aes(x = `residual sugar`, y = wine_colour)) + geom_joy())
   print(ggplot(df, aes(x = chlorides, y = wine_colour)) + geom_joy())
   print(ggplot(df, aes(x = `free sulfur dioxide`, y = wine_colour)) + geom_joy())
-  print(ggplot(df, aes(x = `total sulfur dioxide`, y = wine_colour)) + geom_joy())
+  print(ggplot(df, aes(x = `other sulfur dioxide`, y = wine_colour)) + geom_joy())
   print(ggplot(df, aes(x = density, y = wine_colour)) + geom_joy())
   print(ggplot(df, aes(x = pH, y = wine_colour)) + geom_joy())
   print(ggplot(df, aes(x = sulphates, y = wine_colour)) + geom_joy())
@@ -239,7 +239,7 @@ other_plots <- function(df) {
   )
   
   print(
-    pairs(~ quality + `total sulfur dioxide`, data=df)
+    pairs(~ quality + `other sulfur dioxide`, data=df)
   )
   
   print(
@@ -326,9 +326,9 @@ other_plots <- function(df) {
   
   print(
     df %>%
-      select(quality, `total sulfur dioxide`) %>%
+      select(quality, `other sulfur dioxide`) %>%
       group_by(quality) %>%
-      ggplot(aes(quality, `total sulfur dioxide`)) +
+      ggplot(aes(quality, `other sulfur dioxide`)) +
       geom_boxplot(aes(fill = quality)) 
   )
   
@@ -427,9 +427,9 @@ boxplots_quality_colour_wine <- function(df, colour) {
   
   print(
     df %>%
-      select(quality, `total sulfur dioxide`) %>%
+      select(quality, `other sulfur dioxide`) %>%
       group_by(quality) %>%
-      ggplot(aes(quality, `total sulfur dioxide`)) +
+      ggplot(aes(quality, `other sulfur dioxide`)) +
       geom_boxplot(aes(fill = quality)) + 
       ggtitle(paste(colour, ' wine')) 
   )

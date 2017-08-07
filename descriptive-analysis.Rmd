@@ -19,11 +19,7 @@ library(corrplot)
 ```
 
 ```{r loading-data, message=FALSE, warning=FALSE}
-df <- load_data()
-
-df <- introduce_nas(df, 22.5, 'pH')
-
-
+# First run feature-engineering chunk from preprocessing.Rmd
 ```
 
 # Data dictionary
@@ -94,6 +90,23 @@ corrs <- cor(drop_na(df) %>% select(-wine_colour))
 corrs
 
 corrplot.mixed(corrs, upper="ellipse", lower="number")
+
+
+
+
+corrs_red <- cor(drop_na(df) %>% filter(wine_colour == 'red') %>% select(-wine_colour))
+
+corrs_red
+
+corrplot.mixed(corrs_red, upper="ellipse", lower="number")
+
+
+
+corrs_white <- cor(drop_na(df) %>% filter(wine_colour == 'white') %>% select(-wine_colour))
+
+corrs_white
+
+corrplot.mixed(corrs_white, upper="ellipse", lower="number")
 ```
 
 
