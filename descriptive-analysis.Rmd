@@ -33,14 +33,15 @@ https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequali
    4 - residual sugar
    5 - chlorides
    6 - free sulfur dioxide
-   7 - total sulfur dioxide
-   8 - density
-   9 - pH
-   10 - sulphates
-   11 - alcohol
-   12 - wine_colour
+   7 - total sulfur dioxide -> Removed
+   8 - other sulfur dioxide -> Created from 'total sulfur dioxide' - 'free sulfur dioxide'
+   9 - density
+   10 - pH
+   11 - sulphates
+   12 - alcohol
+   13 - wine_colour
    Output variable (based on sensory data): 
-   13 - quality (score between 0 and 10)
+   14 - quality (score between 0 and 10)
    
 4. Relevant Information:
 
@@ -57,7 +58,7 @@ https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequali
 
 5. Number of Instances: red wine - 1599; white wine - 4898. 
 
-6. Number of Attributes: 11 + output attribute
+6. Number of Attributes: 12 + output attribute
   
    Note: several of the attributes may be correlated, thus it makes sense to apply some sort of
    feature selection.
