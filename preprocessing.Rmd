@@ -92,14 +92,12 @@ densityplot(pmm_imp, subset=.imp==3)
 
 pmm_data <- complete(pmm_imp, action = 3)
 
-pcaA <- pca(pmm_data %>% select(-quality, -wine_colour), scale = "uv", center = T, nPcs = length(names(pmm_data)) - 2, method = "svd")
-pcaA@R2
-pcaA@R2cum
-pcaA@loadings
-biplot(pcaA, scale = F)
-slplot(pcaA, scoresLoadings = c(T,T), scol = pmm_data$quality)
+pca <- pcaMethods::pca(pmm_data %>% select(-quality, -wine_colour), scale = "uv", center = T, nPcs = 11, method = "svd")
+pca@loadings
+biplot(pca, scale = F)
+pcaMethods::slplot(pca, scoresLoadings = c(T,T), scol = pmm_data$quality)
 
-pc_vars <- pcaA@sDev^2
+pc_vars <- pca@sDev^2
 pc_var_ex <- pc_vars/sum(pc_vars)
 
 plot(pc_var_ex, xlab = "Principal Components",
@@ -111,19 +109,7 @@ plot(cumsum(pc_var_ex), xlab = "Principal Component",
               type = "b")
 
 # With the first 6 PCAs we explain above 80% of the variance.
+# However the scree plots show we're not in an ideal PCA situation (there should be a clear elbow and then a (almost) straight line)
 ```
 
-```{r feature-selection-efa}
-parallel <- fa.parallel(pmm_data %>% select(-quality, -wine_colour), fm = 'minres', fa = 'fa')
-
-efa <- fa(pmm_data %>% select(-quality, -wine_colour), nfactors = 4, rotate = "oblimin", fm="ml")
-
-print(efa$loadings,cutoff = 0.4)
-
-fa.diagram(efa)
-
-efa
-
-# RMSA is too big: this is a bad EFA, maybe I should change the value of nfactors, rotate and fm.
-```
 
