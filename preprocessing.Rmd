@@ -110,6 +110,8 @@ plot(cumsum(pc_var_ex), xlab = "Principal Component",
 
 # With the first 6 PCAs we explain above 80% of the variance.
 # However the scree plots show we're not in an ideal PCA situation (there should be a clear elbow and then a (almost) straight line)
+
+cbind(pca@scores[,1:6], quality = pmm_data$quality)
 ```
 
 
