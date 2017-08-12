@@ -13,7 +13,7 @@ library(tidyverse)
 library(caret)
 ```
 
-```{r train-validation-test-splits}
+```{r train-test-splits}
 # The idea is to keep the different sets of values we generated in the missing data imputation stage. I'm gonna stick with the Predictive Mean Matching method.
 
 set.seed(seed)
@@ -27,14 +27,7 @@ train_set_1 <- complete(pmm_imp, action = 1)[train_index,]
 train_set_2 <- complete(pmm_imp, action = 2)[train_index,]
 train_set_3 <- complete(pmm_imp, action = 3)[train_index,]
 
-actual_train_index <- createDataPartition(train_set_1$quality, 
-                                        p = .8, 
-                                        list = FALSE, 
-                                        times = 1)
-
-train_sets <- list(train_set_1[actual_train_index,], train_set_2[actual_train_index,], train_set_3[actual_train_index,])
-
-validation_sets <- list(train_set_1[-actual_train_index,], train_set_2[-actual_train_index,], train_set_3[-actual_train_index,])
+train_sets <- list(train_set_1, train_set_2, train_set_3)
 
 test_set_1 <- complete(pmm_imp, action = 1)[-train_index,]
 test_set_2 <- complete(pmm_imp, action = 2)[-train_index,]
