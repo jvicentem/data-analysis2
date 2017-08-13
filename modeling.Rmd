@@ -1,0 +1,176 @@
+---
+title: "modeling"
+author: "jvicentem"
+date: "12 August 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+
+library(caret)
+
+library(doMC)
+registerDoMC(cores = 4)
+
+library(parallel)
+
+library(rattle)
+
+library(rpart.plot)
+```
+
+```{r cart}
+# trControl <- trainControl(method = 'cv', number = 5)
+# 
+# fit.rpart1 <- train(y = train_set_1$quality,
+#                     x = train_set_1 %>% select(-quality),
+#                     method='rpart', 
+#                     trControl=trControl, 
+#                     metric='RMSE', 
+#                     maximize=FALSE, 
+#                     preProcess=c('center','scale'))
+# 
+# fit.rpart2 <- train(y = train_set_2$quality,
+#                     x = train_set_2 %>% select(-quality),
+#                     method='rpart', 
+#                     trControl=trControl, 
+#                     metric='RMSE', 
+#                     maximize=FALSE, 
+#                     preProcess=c('center','scale'))
+# 
+# fit.rpart3 <- train(y = train_set_3$quality,
+#                     x = train_set_3 %>% select(-quality),
+#                     method='rpart', 
+#                     trControl=trControl, 
+#                     metric='RMSE', 
+#                     maximize=FALSE, 
+#                     preProcess=c('center','scale'))
+# 
+# with(pmm_imp, train(form = quality ~ `fixed acidity` + `volatile acidity` + `citric acid` + `residual sugar` + `chlorides` + `free sulfur dioxide` + 
+#                     `density` + `pH` + `sulphates` + `alcohol` + `wine_colour` + `other sulfur dioxide`,
+#                     data = pmm_imp,
+#                     method='rpart', 
+#                     trControl=trControl, 
+#                     metric='RMSE', 
+#                     maximize=FALSE, 
+#                     preProcess=c('center','scale')))
+
+# Well, it seems I can't train 3 different dataset with 3 different 'other sulfur dioxide' imputed values and get a "pooled" tree by using pool function from mice library so I'm gonna stick with the set I used to perform PCA.
+
+mean_median_errors <- function(errors) {
+  mses <- foreach(i=1:5, .combine=c) %do% errors[[i]]$mse
+  rmses <- foreach(i=1:5, .combine=c) %do% errors[[i]]$mse
+  maes <- foreach(i=1:5, .combine=c) %do% errors[[i]]$mse
+  
+  print('MSE:')
+  print(paste('Mean:', mean(mses)))
+  print(paste('Median:', median(mses)))
+  print('')
+  print('RMSE:')
+  print(paste('Mean:', mean(rmses)))
+  print(paste('Median:', median(rmses)))
+  print('')
+  print('MAE:')
+  print(paste('Mean:', mean(maes)))
+  print(paste('Median:', median(maes)))  
+}
+
+rpart_with_folds <- function(i, folds) {
+  fold <- folds[[i]]
+  
+  # Best cp: 0.005
+  # tr <- train(y = fold$train$quality,
+  #       x = fold$train %>% select(-quality),
+  #       method='rpart',
+  #       trControl=trainControl(method = 'boot', allowParallel = TRUE),
+  #       tuneGrid=expand.grid(cp=seq(0, 0.1, 0.005)),
+  #       metric='RMSE',
+  #       maximize=FALSE,
+  #       preProcess=c('center','scale'))
+  
+  # Best depth: 8
+  # tr <- train(y = fold$train$quality,
+  #       x = fold$train %>% select(-quality),
+  #       method='rpart2',
+  #       trControl=trainControl(method = 'boot', allowParallel = TRUE),
+  #       tuneGrid=expand.grid(maxdepth=c(4,6,8,9,10,12,14,15,19,25)),
+  #       metric='RMSE',
+  #       maximize=FALSE,
+  #       preProcess=c('center','scale'))
+  
+  # With max depth = 8, best cp is 0.005
+  # tr <- train(y = fold$train$quality,
+  #       x = fold$train %>% select(-quality),
+  #       method='rpart',
+  #       trControl=trainControl(method = 'boot', allowParallel = TRUE),
+  #       tuneGrid=expand.grid(cp=seq(0, 0.1, 0.005)),
+  #       metric='RMSE',
+  #       maximize=FALSE,
+  #       control = rpart.control(maxdepth=8),
+  #       preProcess=c('center','scale'))
+  
+  # Tweaking minsplit. By default it was 20. Best minsplit: ~100 
+  #minbucket is by default minsplit/3  which I think is pretty fair.
+  # tr <- train(y = fold$train$quality,
+  #       x = fold$train %>% select(-quality),
+  #       method='rpart',
+  #       trControl=trainControl(method = 'boot', allowParallel = TRUE),
+  #       tuneGrid=expand.grid(cp=0.005),
+  #       metric='RMSE',
+  #       maximize=FALSE,
+  #       control = rpart.control(maxdepth=8, minsplit=0.025*nrow(fold$train)),
+  #       preProcess=c('center','scale'))
+  
+  # Tweaking split criterion: information or gini (default). No difference between them
+  tr <- train(y = fold$train$quality,
+        x = fold$train %>% select(-quality),
+        method='rpart',
+        trControl=trainControl(method = 'boot', allowParallel = TRUE),
+        tuneGrid=expand.grid(cp=0.005),
+        metric='RMSE',
+        maximize=FALSE,
+        control = rpart.control(maxdepth=8, minsplit=0.025*nrow(fold$train), parms=list(split='information')),
+        preProcess=c('center','scale'))
+  
+  pr <- predict(tr, fold$valid)
+  
+  mse_v <- mean((fold$valid$quality - pr)^2)
+  
+  mae <- sum(abs(fold$valid$quality - pr))/length(fold$valid$quality)
+  
+  print(paste('Fold', i))
+  print(paste('MSE: ', mse_v ))
+  print(paste('RMSE: ' , sqrt(mse_v)) )
+  print(paste('MAE: ', mae ))
+  print('Best tune')
+  print(tr$bestTune)
+  
+  print('---------------------------------------')
+        
+  #plot(tr, main=paste('Fold', i))
+  
+  return(list(fold=i, mse=mse_v, rmse=sqrt(mse_v), mae=mae, model=tr))
+}
+
+error_metrics <- foreach(i=1:5) %do% rpart_with_folds(i, list(fold_1, fold_2, fold_3, fold_4, fold_5))
+
+mean_median_errors(error_metrics)
+
+# Now we train a cart with the whole train set using the parameters tested in the different folds
+cart <- train(y = train_set$quality,
+              x = train_set %>% select(-quality),
+              method='rpart',
+              trControl=trainControl(method = 'none', allowParallel = TRUE),
+              tuneGrid=expand.grid(cp=0.005),
+              metric='RMSE',
+              maximize=FALSE,
+              control = rpart.control(maxdepth=8, minsplit=0.025*nrow(train_set)),
+              preProcess=c('center','scale'))
+  
+fancyRpartPlot(cart$finalModel)
+prp(cart$finalModel) 
+
+plot(varImp(cart))
+```
+
