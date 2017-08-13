@@ -1,0 +1,119 @@
+---
+title: "preprocessing"
+author: "jvicentem"
+date: "31 July 2017"
+output: html_document
+---
+
+```{r setup, message=FALSE, warning=FALSE}
+library(tidyverse)
+
+library(VIM)
+
+library(mice)
+
+library(lattice)
+
+#source("https://bioconductor.org/biocLite.R")
+#biocLite("pcaMethods")
+library(pcaMethods)
+
+library(psych)
+
+library(GPArotation)
+```
+
+```{r loading-data, message=FALSE, warning=FALSE}
+df <- load_data()
+
+df <- introduce_nas(df, 22.5, 'pH')
+```
+
+```{r feature-engineering}
+# I think the most relevant feature engineering tasks were made previously by creating the colour variable (there are significant differences between red wine and white wine). However, there are variables that don't seem to improve or make worse the quality of white wines.and maybe it would be interesting to categorize them or use other techniques such PCA or EFA.
+
+# Create variable which is the difference of free sulfur dioxide and total sulfur dioxide.
+
+df <- df %>% 
+        mutate(`other sulfur dioxide` = `total sulfur dioxide` - `free sulfur dioxide`) %>%
+        select(-`total sulfur dioxide`)
+
+# I think normalization and centering variables should be done having in mind the models we're gonna apply.
+```
+
+```{r missing-values-imputation}
+seed <- 2060786142
+
+# With this histogram we check if there are patterns on missing values for all variable
+# and thus determine if the missing data occurs randomly or not.
+# In this case, it seems we have missing data at random.
+aggr_plot <- aggr(df, col=c('navyblue','red'), numbers=TRUE, sortVars=TRUE,
+              labels=names(df), cex.axis=.56, gap=0.8,
+              ylab=c("Histogram of missing data","Pattern"), cex.numbers=0.6, cex.lab = 0.7)
+
+# X Axis red points: 'other sulfur dioxide' missing values for 'pH' values
+# Y Axis red points: 'pH' missing values for 'other sulfur dioxide' values
+df %>% select(pH, `other sulfur dioxide`) %>% marginplot()
+# Only two missing values for 'other sulfur dioxide'
+# 'pH' missing values seem to be independent of 'other sulfur dioxide' missing values
+
+# For each imputation 3 different datasets will be generated
+# Missing values imputation using stochastic regression
+stoch_regr_imp <- mice(df, method = 'norm.nob', m = 3, seed = seed)
+
+densityplot(stoch_regr_imp)
+
+# stock_regr_data <- complete(stoch_regr_imp, action = 1)
+# stock_regr_data <- complete(stoch_regr_imp, action = 2)
+# stock_regr_data <- complete(stoch_regr_imp, action = 3)
+
+# Missing values imputation using predictive mean matching
+pmm_imp <- mice(df, method = 'fastpmm', m = 3, seed = seed)
+
+densityplot(pmm_imp)
+
+# pmm_data <- complete(pmm_imp, action = 1)
+# pmm_data <- complete(pmm_imp, action = 2)
+# pmm_data <- complete(pmm_imp, action = 3)
+
+# Using Knn (Gower distance) imputation method from VIM package (only one data set generated)
+df %>% select(pH, `other sulfur dioxide`) %>% kNN() %>% marginplot(., delimiter="_imp")
+
+# Now we should use the function pool from mice library so the final predictor's values can be pooled from 
+# each model fitted to the multiple datasets generated from imputations. 
+```
+
+```{r feature-selection-pca}
+# Do I need to choose a set of values generated for the variable with missing values?
+# Can I go on without imputing missing values?
+
+# By the moment, I'm gonna choose the 2nd set of values generated using predictive mean matching
+densityplot(pmm_imp, subset=.imp==2)
+
+pmm_data <- complete(pmm_imp, action = 2)
+
+pca <- pcaMethods::pca(pmm_data %>% select(-quality, -wine_colour), scale = "uv", center = T, nPcs = 11, method = "svd")
+pca@loadings
+
+biplot(pca, scale = F)
+pcaMethods::slplot(pca, scoresLoadings = c(T,T), scol = pmm_data$quality)
+
+summary(pca)
+
+plot(pca@R2, 
+      xlab = "Principal Components",
+      ylab = "Proportion of Variance Explained",
+      type = "b")
+
+plot(pca@R2cum, 
+      xlab = "Principal Component",
+      ylab = "Cumulative Proportion of Variance Explained",
+      type = "b")
+
+# With the first 6 PCAs we explain above 80% of the variance.
+# However the scree plots show we're not in an ideal PCA situation (there should be a clear elbow and then a (almost) straight line)
+
+pca_data <- cbind(pca@scores[,1:8], quality = pmm_data$quality)
+```
+
+

@@ -19,11 +19,7 @@ library(corrplot)
 ```
 
 ```{r loading-data, message=FALSE, warning=FALSE}
-df <- load_data()
-
-df <- introduce_nas(df, 22.5, 'pH')
-
-#pairs(~ quality + alcohol + sulphates + pH + density + `total sulfur dioxide` + `free sulfur dioxide` + chlorides + `residual sugar` + `citric acid` + `volatile acidity` + `fixed acidity`,data=df)
+# First run feature-engineering chunk from preprocessing.Rmd
 ```
 
 # Data dictionary
@@ -37,14 +33,15 @@ https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequali
    4 - residual sugar
    5 - chlorides
    6 - free sulfur dioxide
-   7 - total sulfur dioxide
-   8 - density
-   9 - pH
-   10 - sulphates
-   11 - alcohol
-   12 - wine_colour
+   7 - total sulfur dioxide -> Removed
+   8 - other sulfur dioxide -> Created from 'total sulfur dioxide' - 'free sulfur dioxide'
+   9 - density
+   10 - pH
+   11 - sulphates
+   12 - alcohol
+   13 - wine_colour
    Output variable (based on sensory data): 
-   13 - quality (score between 0 and 10)
+   14 - quality (score between 0 and 10)
    
 4. Relevant Information:
 
@@ -61,7 +58,7 @@ https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequali
 
 5. Number of Instances: red wine - 1599; white wine - 4898. 
 
-6. Number of Attributes: 11 + output attribute
+6. Number of Attributes: 12 + output attribute
   
    Note: several of the attributes may be correlated, thus it makes sense to apply some sort of
    feature selection.
@@ -78,6 +75,14 @@ plot_histograms(df)
 plot_boxplots(df)
 
 plot_joyplots(df)
+
+other_plots(df)
+```
+
+```{r plots2}
+boxplots_quality_colour_wine(df, 'red')
+
+boxplots_quality_colour_wine(df, 'white')
 ```
 
 ```{r cors}
@@ -86,5 +91,24 @@ corrs <- cor(drop_na(df) %>% select(-wine_colour))
 corrs
 
 corrplot.mixed(corrs, upper="ellipse", lower="number")
+
+
+
+
+corrs_red <- cor(drop_na(df) %>% filter(wine_colour == 'red') %>% select(-wine_colour))
+
+corrs_red
+
+corrplot.mixed(corrs_red, upper="ellipse", lower="number")
+
+
+
+corrs_white <- cor(drop_na(df) %>% filter(wine_colour == 'white') %>% select(-wine_colour))
+
+corrs_white
+
+corrplot.mixed(corrs_white, upper="ellipse", lower="number")
 ```
+
+
 
