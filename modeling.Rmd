@@ -60,8 +60,8 @@ library(rpart.plot)
 
 mean_median_errors <- function(errors) {
   mses <- foreach(i=1:5, .combine=c) %do% errors[[i]]$mse
-  rmses <- foreach(i=1:5, .combine=c) %do% errors[[i]]$mse
-  maes <- foreach(i=1:5, .combine=c) %do% errors[[i]]$mse
+  rmses <- foreach(i=1:5, .combine=c) %do% errors[[i]]$rmse
+  maes <- foreach(i=1:5, .combine=c) %do% errors[[i]]$mae
   
   print('MSE:')
   print(paste('Mean:', mean(mses)))
@@ -153,9 +153,9 @@ rpart_with_folds <- function(i, folds) {
   return(list(fold=i, mse=mse_v, rmse=sqrt(mse_v), mae=mae, model=tr))
 }
 
-error_metrics <- foreach(i=1:5) %do% rpart_with_folds(i, list(fold_1, fold_2, fold_3, fold_4, fold_5))
+error_metrics_dt <- foreach(i=1:5) %do% rpart_with_folds(i, list(fold_1, fold_2, fold_3, fold_4, fold_5))
 
-mean_median_errors(error_metrics)
+mean_median_errors(error_metrics_dt)
 
 # Now we train a cart with the whole train set using the parameters tested in the different folds
 cart <- train(y = train_set$quality,
@@ -172,5 +172,61 @@ fancyRpartPlot(cart$finalModel)
 prp(cart$finalModel) 
 
 plot(varImp(cart))
+```
+
+```{r rf}
+rf_with_folds <- function(i, folds) {
+  fold <- folds[[i]]
+  
+  names(fold$train) <- make.names(names(folds[[i]]$train), unique=TRUE)
+  names(fold$valid) <- make.names(names(folds[[i]]$valid), unique=TRUE)
+  
+  # 8 is the best value for mtry
+  # tr <- train(y=fold$train$quality,
+  #            x=fold$train %>% select(-quality),
+  #            method='ranger',
+  #            trControl=trainControl(method = 'boot', allowParallel = TRUE),
+  #            preProc=c('center', 'scale'),
+  #            tuneGrid=expand.grid(mtry = c(4,6,8,9,10)),
+  #            num.trees=200,
+  #            importance='impurity')
+  
+  # Trying to remove from the model some of the less important variables in
+  # cart
+  tr <- train(y=fold$train$quality,
+             x=fold$train %>% select(-quality, -pH, -other.sulfur.dioxide),
+             method='ranger',
+             trControl=trainControl(method = 'boot', allowParallel = TRUE),
+             preProc=c('center', 'scale'),
+             tuneGrid=expand.grid(mtry = c(4,6,8,9)),
+             num.trees=200,
+             always.split.variables=c('volatile.acidity', 'alcohol'),
+             importance='impurity')
+  
+  pr <- predict(tr, fold$valid)
+  
+  mse_v <- mean((fold$valid$quality - pr)^2)
+  
+  mae <- sum(abs(fold$valid$quality - pr))/length(fold$valid$quality)
+  
+  print(paste('Fold', i))
+  print(paste('MSE: ', mse_v ))
+  print(paste('RMSE: ' , sqrt(mse_v)) )
+  print(paste('MAE: ', mae ))
+  print('Best tune')
+  print(tr$bestTune)
+  
+  print('---------------------------------------')
+        
+  plot(tr, main=paste('Fold', i))
+  
+  print(plot(tr, main=paste('Fold', i)))
+  
+  return(list(fold=i, mse=mse_v, rmse=sqrt(mse_v), mae=mae, model=tr))
+}
+
+error_metrics_rf <- foreach(i=1:5) %do% rf_with_folds(i, list(fold_1, fold_2, fold_3, fold_4, fold_5))
+
+mean_median_errors(error_metrics_rf)
 ```
 
