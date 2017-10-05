@@ -157,7 +157,7 @@ error_metrics_dt <- foreach(i=1:5) %do% rpart_with_folds(i, list(fold_1, fold_2,
 
 mean_median_errors(error_metrics_dt)
 
-# Now we train a cart with the whole train set using the parameters tested in the different folds
+# Now we train a cart with the whole train set using the best set of parameters tested in the different folds
 cart <- train(y = train_set$quality,
               x = train_set %>% select(-quality),
               method='rpart',
@@ -226,7 +226,24 @@ rf_with_folds <- function(i, folds) {
 }
 
 error_metrics_rf <- foreach(i=1:5) %do% rf_with_folds(i, list(fold_1, fold_2, fold_3, fold_4, fold_5))
-
+ 
 mean_median_errors(error_metrics_rf)
+
+# Now we train a random forest model with the whole train set using the best set of parameters tested in the different folds
+
+rf_train_set <- train_set
+names(rf_train_set) <- make.names(names(rf_train_set), unique=TRUE)
+
+rf <- train(y = rf_train_set$quality,
+            x = rf_train_set %>% select(-quality, -pH, -other.sulfur.dioxide),
+            method='ranger',
+            trControl=trainControl(method = 'none', allowParallel = TRUE),
+            preProc=c('center', 'scale'),
+            tuneGrid=expand.grid(mtry = 4),
+            num.trees=200,
+            always.split.variables=c('volatile.acidity', 'alcohol'),
+            importance='impurity')
+
+plot(varImp(rf))
 ```
 
