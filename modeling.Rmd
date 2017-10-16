@@ -18,6 +18,8 @@ library(parallel)
 library(rattle)
 
 library(rpart.plot)
+
+library(dummies)
 ```
 
 ```{r cart}
@@ -245,5 +247,84 @@ rf <- train(y = rf_train_set$quality,
             importance='impurity')
 
 plot(varImp(rf))
+```
+
+```{r lsvm}
+lsvm_with_folds <- function(i, folds) {
+  fold <- folds[[i]]
+  
+  tr <- train(y=fold$train$quality,
+             x=fold$train %>% select (-quality, -wine_colour),
+             method='svmLinear2',
+             trControl=trainControl(method = 'boot', allowParallel = TRUE),
+             preProc=c('center', 'scale'),
+             tuneGrid=expand.grid(cost=c(0, 0.01, 0.1, 0.2, 1))
+             )
+  
+  pr <- predict(tr, fold$valid)
+  
+  mse_v <- mean((fold$valid$quality - pr)^2)
+  
+  mae <- sum(abs(fold$valid$quality - pr))/length(fold$valid$quality)
+  
+  print(paste('Fold', i))
+  print(paste('MSE: ', mse_v ))
+  print(paste('RMSE: ' , sqrt(mse_v)) )
+  print(paste('MAE: ', mae ))
+  print('Best tune')
+  print(tr$bestTune)
+  
+  print('---------------------------------------')
+        
+  plot(tr, main=paste('Fold', i))
+  
+  print(plot(tr, main=paste('Fold', i)))
+  
+  return(list(fold=i, mse=mse_v, rmse=sqrt(mse_v), mae=mae, model=tr))
+}
+
+error_metrics_lsvm <- foreach(i=1:5) %do% lsvm_with_folds(i, list(fold_1, fold_2, fold_3, fold_4, fold_5))
+ 
+mean_median_errors(error_metrics_lsvm)
+```
+
+```{r psvm}
+svm_train_set <- train_set %>% mutate(wine_colour = as.factor(wine_colour))
+svm_train_set <- cbind(svm_train_set %>% select(-wine_colour), dummy(svm_train_set$wine_colour, sep="."))
+colnames(svm_train_set) <- c(colnames(svm_train_set)[1:12], c('wine_colour.red', 'wine_colour.white'))
+
+psvm_with_folds <- function(train_df) {
+  
+  tr <- train(y = train_df$quality,
+              x = train_df %>% select(-quality),
+              method='svmPoly',
+              trControl=trainControl(method = 'cv', allowParallel = TRUE,
+                index=list(
+                  f_1 = all_indexes[-folds_indexes$Fold1],
+                  f_2 = all_indexes[-folds_indexes$Fold2],
+                  f_3 = all_indexes[-folds_indexes$Fold3],
+                  f_4 = all_indexes[-folds_indexes$Fold4],
+                  f_5 = all_indexes[-folds_indexes$Fold5]
+                ),
+                indexOut=list(
+                  f_1 = folds_indexes$Fold1,
+                  f_2 = folds_indexes$Fold2,
+                  f_3 = folds_indexes$Fold3,
+                  f_4 = folds_indexes$Fold4,
+                  f_5 = folds_indexes$Fold5
+                ),
+                verboseIter = TRUE,
+                savePredictions = TRUE
+              ),
+              preProcess=c('center', 'scale'),
+              tuneGrid=expand.grid(C=c(0.1), degree=c(1), scale=c(1))
+        )  
+  
+  print(tr$resample)
+  
+  return(tr$resample)
+}
+
+psvm_with_folds(svm_train_set)
 ```
 

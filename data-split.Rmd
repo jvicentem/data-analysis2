@@ -13,7 +13,7 @@ library(caret)
 
 ```{r train-test-splits}
 # The idea is to keep the different sets of values we generated in the missing data imputation stage. I'm gonna stick with the Predictive Mean Matching method.
-# Note: After beginning with the modeling stage I realised for some models the goal written in the line above isn't possible so I'm staying with the second set only which is the one I used for PCA.
+# Note: After beginning with the modeling stage I realised for some models the goal written in the line above isn't possible so I'm sticking with the second set only which is the one I used for PCA.
 
 set.seed(seed)
 
