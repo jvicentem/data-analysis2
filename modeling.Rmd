@@ -60,52 +60,104 @@ library(dummies)
 
 # Well, it seems I can't train 3 different dataset with 3 different 'other sulfur dioxide' imputed values and get a "pooled" tree by using pool function from mice library so I'm gonna stick with the set I used to perform PCA.
 
-mean_median_errors <- function(errors) {
-  mses <- foreach(i=1:5, .combine=c) %do% errors[[i]]$mse
-  rmses <- foreach(i=1:5, .combine=c) %do% errors[[i]]$rmse
-  maes <- foreach(i=1:5, .combine=c) %do% errors[[i]]$mae
+mean_median_errors <- function(folds_errors) {
+  square <- function(x) x^2
+  
+  mses <- foreach(x=folds_errors$RMSE, .combine='cbind') %do% square(x)
   
   print('MSE:')
   print(paste('Mean:', mean(mses)))
   print(paste('Median:', median(mses)))
   print('')
   print('RMSE:')
-  print(paste('Mean:', mean(rmses)))
-  print(paste('Median:', median(rmses)))
+  print(paste('Mean:', mean(folds_errors$RMSE)))
+  print(paste('Median:', median(folds_errors$RMSE)))
   print('')
   print('MAE:')
-  print(paste('Mean:', mean(maes)))
-  print(paste('Median:', median(maes)))  
+  print(paste('Mean:', mean(folds_errors$MAE)))
+  print(paste('Median:', median(folds_errors$MAE)))  
 }
 
-rpart_with_folds <- function(i, folds) {
-  fold <- folds[[i]]
-  
+rpart_with_folds <- function(train_df) {
   # Best cp: 0.005
-  # tr <- train(y = fold$train$quality,
-  #       x = fold$train %>% select(-quality),
+  # tr <- train(y = train_df$quality,
+  #       x = train_df %>% select(-quality),
   #       method='rpart',
-  #       trControl=trainControl(method = 'boot', allowParallel = TRUE),
+  #       trControl=trainControl(method = 'cv', 
+  #                    allowParallel = TRUE,
+  #                    index=list(
+  #                      f_1 = all_indexes[-folds_indexes$Fold1],
+  #                      f_2 = all_indexes[-folds_indexes$Fold2],
+  #                      f_3 = all_indexes[-folds_indexes$Fold3],
+  #                      f_4 = all_indexes[-folds_indexes$Fold4],
+  #                      f_5 = all_indexes[-folds_indexes$Fold5]
+  #                    ),
+  #                    indexOut=list(
+  #                      f_1 = folds_indexes$Fold1,
+  #                      f_2 = folds_indexes$Fold2,
+  #                      f_3 = folds_indexes$Fold3,
+  #                      f_4 = folds_indexes$Fold4,
+  #                      f_5 = folds_indexes$Fold5
+  #                    ),
+  #                    verboseIter = TRUE,
+  #                    savePredictions = TRUE
+  #                  ),
   #       tuneGrid=expand.grid(cp=seq(0, 0.1, 0.005)),
   #       metric='RMSE',
   #       maximize=FALSE,
   #       preProcess=c('center','scale'))
   
   # Best depth: 8
-  # tr <- train(y = fold$train$quality,
-  #       x = fold$train %>% select(-quality),
+  # tr <- train(y = train_df$quality,
+  #       x = train_df %>% select(-quality),
   #       method='rpart2',
-  #       trControl=trainControl(method = 'boot', allowParallel = TRUE),
+  #       trControl=trainControl(method = 'cv', 
+  #                    allowParallel = TRUE,
+  #                    index=list(
+  #                      f_1 = all_indexes[-folds_indexes$Fold1],
+  #                      f_2 = all_indexes[-folds_indexes$Fold2],
+  #                      f_3 = all_indexes[-folds_indexes$Fold3],
+  #                      f_4 = all_indexes[-folds_indexes$Fold4],
+  #                      f_5 = all_indexes[-folds_indexes$Fold5]
+  #                    ),
+  #                    indexOut=list(
+  #                      f_1 = folds_indexes$Fold1,
+  #                      f_2 = folds_indexes$Fold2,
+  #                      f_3 = folds_indexes$Fold3,
+  #                      f_4 = folds_indexes$Fold4,
+  #                      f_5 = folds_indexes$Fold5
+  #                    ),
+  #                    verboseIter = TRUE,
+  #                    savePredictions = TRUE
+  #                  ),
   #       tuneGrid=expand.grid(maxdepth=c(4,6,8,9,10,12,14,15,19,25)),
   #       metric='RMSE',
   #       maximize=FALSE,
   #       preProcess=c('center','scale'))
   
   # With max depth = 8, best cp is 0.005
-  # tr <- train(y = fold$train$quality,
-  #       x = fold$train %>% select(-quality),
+  # tr <- train(y = train_df$quality,
+  #       x = train_df %>% select(-quality),
   #       method='rpart',
-  #       trControl=trainControl(method = 'boot', allowParallel = TRUE),
+  #       trControl=trainControl(method = 'cv', 
+  #                    allowParallel = TRUE,
+  #                    index=list(
+  #                      f_1 = all_indexes[-folds_indexes$Fold1],
+  #                      f_2 = all_indexes[-folds_indexes$Fold2],
+  #                      f_3 = all_indexes[-folds_indexes$Fold3],
+  #                      f_4 = all_indexes[-folds_indexes$Fold4],
+  #                      f_5 = all_indexes[-folds_indexes$Fold5]
+  #                    ),
+  #                    indexOut=list(
+  #                      f_1 = folds_indexes$Fold1,
+  #                      f_2 = folds_indexes$Fold2,
+  #                      f_3 = folds_indexes$Fold3,
+  #                      f_4 = folds_indexes$Fold4,
+  #                      f_5 = folds_indexes$Fold5
+  #                    ),
+  #                    verboseIter = TRUE,
+  #                    savePredictions = TRUE
+  #                  ),
   #       tuneGrid=expand.grid(cp=seq(0, 0.1, 0.005)),
   #       metric='RMSE',
   #       maximize=FALSE,
@@ -114,50 +166,74 @@ rpart_with_folds <- function(i, folds) {
   
   # Tweaking minsplit. By default it was 20. Best minsplit: ~100 
   #minbucket is by default minsplit/3  which I think is pretty fair.
-  # tr <- train(y = fold$train$quality,
-  #       x = fold$train %>% select(-quality),
+  # tr <- train(y = train_df$quality,
+  #       x = train_df %>% select(-quality),
   #       method='rpart',
-  #       trControl=trainControl(method = 'boot', allowParallel = TRUE),
+  #       trControl=trainControl(method = 'cv', 
+  #                    allowParallel = TRUE,
+  #                    index=list(
+  #                      f_1 = all_indexes[-folds_indexes$Fold1],
+  #                      f_2 = all_indexes[-folds_indexes$Fold2],
+  #                      f_3 = all_indexes[-folds_indexes$Fold3],
+  #                      f_4 = all_indexes[-folds_indexes$Fold4],
+  #                      f_5 = all_indexes[-folds_indexes$Fold5]
+  #                    ),
+  #                    indexOut=list(
+  #                      f_1 = folds_indexes$Fold1,
+  #                      f_2 = folds_indexes$Fold2,
+  #                      f_3 = folds_indexes$Fold3,
+  #                      f_4 = folds_indexes$Fold4,
+  #                      f_5 = folds_indexes$Fold5
+  #                    ),
+  #                    verboseIter = TRUE,
+  #                    savePredictions = TRUE
+  #                  ),
   #       tuneGrid=expand.grid(cp=0.005),
   #       metric='RMSE',
   #       maximize=FALSE,
-  #       control = rpart.control(maxdepth=8, minsplit=0.025*nrow(fold$train)),
+  #       control = rpart.control(maxdepth=8, minsplit=0.025*nrow(train_df)),
   #       preProcess=c('center','scale'))
   
   # Tweaking split criterion: information or gini (default). No difference between them
-  tr <- train(y = fold$train$quality,
-        x = fold$train %>% select(-quality),
-        method='rpart',
-        trControl=trainControl(method = 'boot', allowParallel = TRUE),
-        tuneGrid=expand.grid(cp=0.005),
-        metric='RMSE',
-        maximize=FALSE,
-        control = rpart.control(maxdepth=8, minsplit=0.025*nrow(fold$train), parms=list(split='information')),
-        preProcess=c('center','scale'))
+  tr <- train(y = train_df$quality,
+              x = train_df %>% select(-quality),
+              method='rpart',
+              trControl=trainControl(method = 'cv', 
+                          allowParallel = TRUE,
+                          index=list(
+                            f_1 = all_indexes[-folds_indexes$Fold1],
+                            f_2 = all_indexes[-folds_indexes$Fold2],
+                            f_3 = all_indexes[-folds_indexes$Fold3],
+                            f_4 = all_indexes[-folds_indexes$Fold4],
+                            f_5 = all_indexes[-folds_indexes$Fold5]
+                          ),
+                          indexOut=list(
+                            f_1 = folds_indexes$Fold1,
+                            f_2 = folds_indexes$Fold2,
+                            f_3 = folds_indexes$Fold3,
+                            f_4 = folds_indexes$Fold4,
+                            f_5 = folds_indexes$Fold5
+                          ),
+                          verboseIter = TRUE,
+                          savePredictions = TRUE
+                        ),
+              preProcess=c('center', 'scale'),
+              tuneGrid=expand.grid(cp=0.005),
+              metric='RMSE',
+              maximize=FALSE,
+              control = rpart.control(maxdepth=8, minsplit=0.025*nrow(train_df), parms=list(split='information')),
+              preProcess=c('center','scale'))
   
-  pr <- predict(tr, fold$valid)
-  
-  mse_v <- mean((fold$valid$quality - pr)^2)
-  
-  mae <- sum(abs(fold$valid$quality - pr))/length(fold$valid$quality)
-  
-  print(paste('Fold', i))
-  print(paste('MSE: ', mse_v ))
-  print(paste('RMSE: ' , sqrt(mse_v)) )
-  print(paste('MAE: ', mae ))
+  print(tr$resample)
   print('Best tune')
   print(tr$bestTune)
   
-  print('---------------------------------------')
-        
-  #plot(tr, main=paste('Fold', i))
-  
-  return(list(fold=i, mse=mse_v, rmse=sqrt(mse_v), mae=mae, model=tr))
+  return(tr)
 }
 
-error_metrics_dt <- foreach(i=1:5) %do% rpart_with_folds(i, list(fold_1, fold_2, fold_3, fold_4, fold_5))
+error_metrics_cart <- cart_with_folds(train_set)$resample
 
-mean_median_errors(error_metrics_dt)
+mean_median_errors(error_metrics_cart)
 
 # Now we train a cart with the whole train set using the best set of parameters tested in the different folds
 cart <- train(y = train_set$quality,
@@ -177,65 +253,79 @@ plot(varImp(cart))
 ```
 
 ```{r rf}
-rf_with_folds <- function(i, folds) {
-  fold <- folds[[i]]
+rf_train_set <- train_set
+names(rf_train_set) <- make.names(names(rf_train_set), unique=TRUE)
   
-  names(fold$train) <- make.names(names(folds[[i]]$train), unique=TRUE)
-  names(fold$valid) <- make.names(names(folds[[i]]$valid), unique=TRUE)
-  
+rf_with_folds <- function(train_df) {
   # 8 is the best value for mtry
-  # tr <- train(y=fold$train$quality,
-  #            x=fold$train %>% select(-quality),
+  # tr <- train(y=train_df$quality,
+  #            x=train_df %>% select(-quality),
   #            method='ranger',
-  #            trControl=trainControl(method = 'boot', allowParallel = TRUE),
+  #            trControl=trainControl(method = 'cv', 
+  #                    allowParallel = TRUE,
+  #                    index=list(
+  #                      f_1 = all_indexes[-folds_indexes$Fold1],
+  #                      f_2 = all_indexes[-folds_indexes$Fold2],
+  #                      f_3 = all_indexes[-folds_indexes$Fold3],
+  #                      f_4 = all_indexes[-folds_indexes$Fold4],
+  #                      f_5 = all_indexes[-folds_indexes$Fold5]
+  #                    ),
+  #                    indexOut=list(
+  #                      f_1 = folds_indexes$Fold1,
+  #                      f_2 = folds_indexes$Fold2,
+  #                      f_3 = folds_indexes$Fold3,
+  #                      f_4 = folds_indexes$Fold4,
+  #                      f_5 = folds_indexes$Fold5
+  #                    ),
+  #                    verboseIter = TRUE,
+  #                    savePredictions = TRUE
+  #                  ),
   #            preProc=c('center', 'scale'),
   #            tuneGrid=expand.grid(mtry = c(4,6,8,9,10)),
   #            num.trees=200,
   #            importance='impurity')
   
   # Trying to remove from the model some of the less important variables in
-  # cart
-  tr <- train(y=fold$train$quality,
-             x=fold$train %>% select(-quality, -pH, -other.sulfur.dioxide),
+  # cart  
+  tr <- train(y=train_df$quality,
+             x=train_df %>% select(-quality, -pH, -other.sulfur.dioxide),
              method='ranger',
-             trControl=trainControl(method = 'boot', allowParallel = TRUE),
+             trControl=trainControl(method = 'cv', allowParallel = TRUE,
+               index=list(
+                 f_1 = all_indexes[-folds_indexes$Fold1],
+                 f_2 = all_indexes[-folds_indexes$Fold2],
+                 f_3 = all_indexes[-folds_indexes$Fold3],
+                 f_4 = all_indexes[-folds_indexes$Fold4],
+                 f_5 = all_indexes[-folds_indexes$Fold5]
+               ),
+               indexOut=list(
+                 f_1 = folds_indexes$Fold1,
+                 f_2 = folds_indexes$Fold2,
+                 f_3 = folds_indexes$Fold3,
+                 f_4 = folds_indexes$Fold4,
+                 f_5 = folds_indexes$Fold5
+               ),                
+               verboseIter = TRUE,
+               savePredictions = TRUE
+             ),
              preProc=c('center', 'scale'),
              tuneGrid=expand.grid(mtry = c(4,6,8,9)),
              num.trees=200,
              always.split.variables=c('volatile.acidity', 'alcohol'),
              importance='impurity')
   
-  pr <- predict(tr, fold$valid)
-  
-  mse_v <- mean((fold$valid$quality - pr)^2)
-  
-  mae <- sum(abs(fold$valid$quality - pr))/length(fold$valid$quality)
-  
-  print(paste('Fold', i))
-  print(paste('MSE: ', mse_v ))
-  print(paste('RMSE: ' , sqrt(mse_v)) )
-  print(paste('MAE: ', mae ))
+  print(tr$resample)
   print('Best tune')
   print(tr$bestTune)
   
-  print('---------------------------------------')
-        
-  plot(tr, main=paste('Fold', i))
-  
-  print(plot(tr, main=paste('Fold', i)))
-  
-  return(list(fold=i, mse=mse_v, rmse=sqrt(mse_v), mae=mae, model=tr))
+  return(tr)
 }
 
-error_metrics_rf <- foreach(i=1:5) %do% rf_with_folds(i, list(fold_1, fold_2, fold_3, fold_4, fold_5))
- 
+error_metrics_rf <- rf_with_folds(rf_train_set)
+
 mean_median_errors(error_metrics_rf)
 
 # Now we train a random forest model with the whole train set using the best set of parameters tested in the different folds
-
-rf_train_set <- train_set
-names(rf_train_set) <- make.names(names(rf_train_set), unique=TRUE)
-
 rf <- train(y = rf_train_set$quality,
             x = rf_train_set %>% select(-quality, -pH, -other.sulfur.dioxide),
             method='ranger',
@@ -249,43 +339,85 @@ rf <- train(y = rf_train_set$quality,
 plot(varImp(rf))
 ```
 
+
 ```{r lsvm}
-lsvm_with_folds <- function(i, folds) {
-  fold <- folds[[i]]
+svm_train_set <- train_set %>% mutate(wine_colour = as.factor(wine_colour))
+svm_train_set <- cbind(svm_train_set %>% select(-wine_colour), dummy(svm_train_set$wine_colour, sep="."))
+colnames(svm_train_set) <- c(colnames(svm_train_set)[1:12], c('wine_colour.red', 'wine_colour.white'))
+
+lsvm_with_folds <- function(train_df) {
+  # tr <- train(y=train_df$quality,
+  #             x=train_df %>% select (-quality),
+  #             method='svmLinear2',
+  #             trControl=trainControl(method = 'cv', allowParallel = TRUE,
+  #              index=list(
+  #                f_1 = all_indexes[-folds_indexes$Fold1],
+  #                f_2 = all_indexes[-folds_indexes$Fold2],
+  #                f_3 = all_indexes[-folds_indexes$Fold3],
+  #                f_4 = all_indexes[-folds_indexes$Fold4],
+  #                f_5 = all_indexes[-folds_indexes$Fold5]
+  #              ),
+  #              indexOut=list(
+  #                f_1 = folds_indexes$Fold1,
+  #                f_2 = folds_indexes$Fold2,
+  #                f_3 = folds_indexes$Fold3,
+  #                f_4 = folds_indexes$Fold4,
+  #                f_5 = folds_indexes$Fold5
+  #              ),
+  #              verboseIter = TRUE,
+  #              savePredictions = TRUE
+  #             ),
+  #             preProc=c('center', 'scale'),
+  #             tuneGrid=expand.grid(cost=c(0, 0.01, 0.1, 0.2, 1))
+  #          )
   
-  tr <- train(y=fold$train$quality,
-             x=fold$train %>% select (-quality, -wine_colour),
-             method='svmLinear2',
-             trControl=trainControl(method = 'boot', allowParallel = TRUE),
-             preProc=c('center', 'scale'),
-             tuneGrid=expand.grid(cost=c(0, 0.01, 0.1, 0.2, 1))
-             )
+  tr <- train(y=train_df$quality,
+              x=train_df %>% select (-quality, -pH),
+              method='svmLinear2',
+              trControl=trainControl(method = 'cv', allowParallel = TRUE,
+               index=list(
+                 f_1 = all_indexes[-folds_indexes$Fold1],
+                 f_2 = all_indexes[-folds_indexes$Fold2],
+                 f_3 = all_indexes[-folds_indexes$Fold3],
+                 f_4 = all_indexes[-folds_indexes$Fold4],
+                 f_5 = all_indexes[-folds_indexes$Fold5]
+               ),
+               indexOut=list(
+                 f_1 = folds_indexes$Fold1,
+                 f_2 = folds_indexes$Fold2,
+                 f_3 = folds_indexes$Fold3,
+                 f_4 = folds_indexes$Fold4,
+                 f_5 = folds_indexes$Fold5
+               ),
+               verboseIter = TRUE,
+               savePredictions = TRUE
+              ),
+              preProc=c('center', 'scale'),
+              tuneGrid=expand.grid(cost=c(0, 0.01, 0.015, 0.02, 0.1, 0.2, 1))
+           )  
   
-  pr <- predict(tr, fold$valid)
-  
-  mse_v <- mean((fold$valid$quality - pr)^2)
-  
-  mae <- sum(abs(fold$valid$quality - pr))/length(fold$valid$quality)
-  
-  print(paste('Fold', i))
-  print(paste('MSE: ', mse_v ))
-  print(paste('RMSE: ' , sqrt(mse_v)) )
-  print(paste('MAE: ', mae ))
+  print(tr$resample)
   print('Best tune')
   print(tr$bestTune)
   
-  print('---------------------------------------')
-        
-  plot(tr, main=paste('Fold', i))
-  
-  print(plot(tr, main=paste('Fold', i)))
-  
-  return(list(fold=i, mse=mse_v, rmse=sqrt(mse_v), mae=mae, model=tr))
+  return(tr)
 }
 
-error_metrics_lsvm <- foreach(i=1:5) %do% lsvm_with_folds(i, list(fold_1, fold_2, fold_3, fold_4, fold_5))
- 
+lsvm_train <- lsvm_with_folds(svm_train_set)
+
+error_metrics_lsvm <- lsvm_train$resample
 mean_median_errors(error_metrics_lsvm)
+
+lsvm <- train(y=svm_train_set$quality,
+              x=svm_train_set %>% select (-quality, -pH),
+              method='svmLinear2',
+              trControl=trainControl(method = 'none', allowParallel = TRUE),
+              preProc=c('center', 'scale'),
+              tuneGrid=expand.grid(cost=c(0.01))
+             )
+
+varImp(lsvm)
+plot(varImp(lsvm))
 ```
 
 ```{r psvm}
@@ -294,7 +426,6 @@ svm_train_set <- cbind(svm_train_set %>% select(-wine_colour), dummy(svm_train_s
 colnames(svm_train_set) <- c(colnames(svm_train_set)[1:12], c('wine_colour.red', 'wine_colour.white'))
 
 psvm_with_folds <- function(train_df) {
-  
   tr <- train(y = train_df$quality,
               x = train_df %>% select(-quality),
               method='svmPoly',
@@ -317,14 +448,30 @@ psvm_with_folds <- function(train_df) {
                 savePredictions = TRUE
               ),
               preProcess=c('center', 'scale'),
-              tuneGrid=expand.grid(C=c(0.1), degree=c(1), scale=c(1))
+              tuneGrid=expand.grid(C=c(0, 0.01, 0.1, 0.015, 0.02, 1), degree=c(2, 4, 6), scale=c(1))
         )  
   
   print(tr$resample)
+  print('Best tune')
+  print(tr$bestTune)
   
-  return(tr$resample)
+  return(tr)
 }
 
-psvm_with_folds(svm_train_set)
+psvm_train <- psvm_with_folds(svm_train_set)
+error_metrics_psvm <- psvm_train$resample
+
+mean_median_errors(error_metrics_psvm)
+
+psvm <- train(y=svm_train_set$quality,
+              x=svm_train_set %>% select (-quality, -pH),
+              method='svmPoly',
+              trControl=trainControl(method = 'none', allowParallel = TRUE),
+              preProc=c('center', 'scale'),
+              tuneGrid=expand.grid(C=c(0.01), degree=c(2), scale=c(1))
+             )
+
+varImp(psvm)
+plot(varImp(psvm))
 ```
 
