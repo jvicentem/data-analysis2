@@ -21,6 +21,8 @@ library(pcaMethods)
 library(psych)
 
 library(GPArotation)
+
+source('utils.R')
 ```
 
 ```{r loading-data, message=FALSE, warning=FALSE}
