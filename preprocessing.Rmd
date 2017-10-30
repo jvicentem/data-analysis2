@@ -85,7 +85,7 @@ df %>% select(pH, `other sulfur dioxide`) %>% kNN() %>% marginplot(., delimiter=
 # each model fitted to the multiple datasets generated from imputations. 
 ```
 
-```{r feature-selection-pca}
+```{r dimensionality-reduction-pca}
 # Do I need to choose a set of values generated for the variable with missing values?
 # Can I go on without imputing missing values?
 

@@ -511,3 +511,8 @@ error_metrics_xgb <- xgb_with_folds(train_set)
 mean_median_errors(error_metrics_xgb)
 ```
 
+Next steps:
+* Use the PCA previously done to speed up xgboost and svms training times
+* Cluster the observations and apply a model in each cluster (¿maybe one model for white wine and another model for red wine? ¿use clustering models?)
+* Use linear regression models
+* Convert this problem into a classification problem
