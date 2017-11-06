@@ -1,0 +1,114 @@
+---
+title: "Descriptive Analysis"
+author: "jvicentem"
+date: "26 July 2017"
+output: html_document
+---
+
+```{r setup, message=FALSE, warning=FALSE}
+source('utils.R')
+
+#devtools::install_github("ujjwalkarn/xda")
+
+library(knitr)
+
+library(ggjoy)
+
+#devtools::install_github("vsimko/corrplot")
+library(corrplot)
+```
+
+```{r loading-data, message=FALSE, warning=FALSE}
+# First run feature-engineering chunk from preprocessing.Rmd
+```
+
+# Data dictionary
+
+https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality.names
+
+   Input variables (based on physicochemical tests):
+   1 - fixed acidity
+   2 - volatile acidity
+   3 - citric acid
+   4 - residual sugar
+   5 - chlorides
+   6 - free sulfur dioxide
+   7 - total sulfur dioxide -> Removed
+   8 - other sulfur dioxide -> Created from 'total sulfur dioxide' - 'free sulfur dioxide'
+   9 - density
+   10 - pH
+   11 - sulphates
+   12 - alcohol
+   13 - wine_colour
+   Output variable (based on sensory data): 
+   14 - quality (score between 0 and 10)
+   
+4. Relevant Information:
+
+   The two datasets are related to red and white variants of the Portuguese "Vinho Verde" wine.
+   For more details, consult: http://www.vinhoverde.pt/en/ or the reference [Cortez et al., 2009].
+   Due to privacy and logistic issues, only physicochemical (inputs) and sensory (the output) variables 
+   are available (e.g. there is no data about grape types, wine brand, wine selling price, etc.).
+
+   These datasets can be viewed as classification or regression tasks.
+   The classes are ordered and not balanced (e.g. there are munch more normal wines than
+   excellent or poor ones). Outlier detection algorithms could be used to detect the few excellent
+   or poor wines. Also, we are not sure if all input variables are relevant. So
+   it could be interesting to test feature selection methods. 
+
+5. Number of Instances: red wine - 1599; white wine - 4898. 
+
+6. Number of Attributes: 12 + output attribute
+  
+   Note: several of the attributes may be correlated, thus it makes sense to apply some sort of
+   feature selection.
+   
+   
+```{r summaries}
+xda::numSummary(df)
+xda::charSummary(df)
+```
+
+```{r plots}
+plot_histograms(df)
+
+plot_boxplots(df)
+
+plot_joyplots(df)
+
+other_plots(df)
+```
+
+```{r plots2}
+boxplots_quality_colour_wine(df, 'red')
+
+boxplots_quality_colour_wine(df, 'white')
+```
+
+```{r cors}
+corrs <- cor(drop_na(df) %>% select(-wine_colour))
+
+corrs
+
+corrplot.mixed(corrs, upper="ellipse", lower="number")
+
+
+
+
+corrs_red <- cor(drop_na(df) %>% filter(wine_colour == 'red') %>% select(-wine_colour))
+
+corrs_red
+
+corrplot.mixed(corrs_red, upper="ellipse", lower="number")
+
+
+
+corrs_white <- cor(drop_na(df) %>% filter(wine_colour == 'white') %>% select(-wine_colour))
+
+corrs_white
+
+corrplot.mixed(corrs_white, upper="ellipse", lower="number")
+```
+
+
+

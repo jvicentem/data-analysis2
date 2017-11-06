@@ -1,0 +1,37 @@
+---
+title: "data-split"
+author: "jvicentem"
+date: "10 August 2017"
+output: html_document
+---
+
+```{r setup, message=FALSE, warning=FALSE}
+library(tidyverse)
+
+library(caret)
+```
+
+```{r train-test-splits}
+# The idea is to keep the different sets of values we generated in the missing data imputation stage. I'm gonna stick with the Predictive Mean Matching method.
+# Note: After beginning with the modeling stage I realised for some models the goal written in the line above isn't possible so I'm sticking with the second set only which is the one I used for PCA.
+
+set.seed(seed)
+
+train_index <- createDataPartition(complete(pmm_imp, action = 1)$quality, 
+                                   p = .8, 
+                                   list = FALSE, 
+                                   times = 1)
+
+train_set <- complete(pmm_imp, action = 2)[train_index,]
+
+folds_indexes <- createFolds(train_set$quality, k = 5, list = TRUE, returnTrain = FALSE)
+
+fold_1 <- list(train = train_set[-folds_indexes$Fold1,], valid = train_set[folds_indexes$Fold1,])
+fold_2 <- list(train = train_set[-folds_indexes$Fold2,], valid = train_set[folds_indexes$Fold2,])
+fold_3 <- list(train = train_set[-folds_indexes$Fold3,], valid = train_set[folds_indexes$Fold3,])
+fold_4 <- list(train = train_set[-folds_indexes$Fold4,], valid = train_set[folds_indexes$Fold4,])
+fold_5 <- list(train = train_set[-folds_indexes$Fold5,], valid = train_set[folds_indexes$Fold5,])
+
+test_set <- complete(pmm_imp, action = 2)[-train_index,]
+```
+
