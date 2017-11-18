@@ -60,6 +60,8 @@ library(dummies)
 
 # Well, it seems I can't train 3 different dataset with 3 different 'other sulfur dioxide' imputed values and get a "pooled" tree by using pool function from mice library so I'm gonna stick with the set I used to perform PCA.
 
+all_indexes <- 1:nrow(train_set)
+
 mean_median_errors <- function(folds_errors) {
   square <- function(x) x^2
   
@@ -475,7 +477,7 @@ plot(varImp(psvm))
 ```{r xgboost}
 xgb_with_folds <- function(train_df) {
   tr <- train(y=train_df$quality,
-             x=train_df %>% select(-quality),
+             x=train_df %>% select(-quality, -wine_colour.white),
              method='xgbLinear',
              trControl=trainControl(method = 'cv', allowParallel = TRUE,
                index=list(
@@ -496,7 +498,7 @@ xgb_with_folds <- function(train_df) {
                savePredictions = TRUE
              ),
              preProc=c('center', 'scale'),
-             tuneGrid=expand.grid(nrounds = c(1000), lambda = c(0, 0.5, 1), eta = c(0.01, 0.1))
+             tuneGrid=expand.grid(nrounds = c(1000), lambda = c(0, 0.5, 1), alpha = c(0, 0.5, 0.8, 1), eta = c(0.005, 0.01, 0.02))
              )
   
   print(tr$resample)
@@ -506,12 +508,29 @@ xgb_with_folds <- function(train_df) {
   return(tr)
 }
 
-error_metrics_xgb <- xgb_with_folds(train_set)
+xgb_train <- xgb_with_folds(svm_train_set)
+error_metrics_xgb <- xgb_train$resample
 
 mean_median_errors(error_metrics_xgb)
+
+xgb <- train(y=svm_train_set$quality,
+              x=svm_train_set %>% select (-quality, -wine_colour.white),
+              method='xgbLinear',
+              trControl=trainControl(method = 'none', allowParallel = TRUE),
+              preProc=c('center', 'scale'),
+              # Though CV output says eta = 0.005 is better, I'm gonna stick with 0.01 because
+              #the error metrics are equal and this last value can make training a little bit faster
+              tuneGrid=expand.grid(nrounds = c(10000), lambda = c(0), alpha = c(1), eta = c(0.01))
+             )
+
+varImp(xgb)
+plot(varImp(xgb))
 ```
 
+I've removed the less important variables from almost every model to make them more parsimonious and improve the training times having in mind the penalization in prediction this takes. 
+
 Next steps:
+* Try all these models on the test set
 * Use the PCA previously done to speed up xgboost and svms training times
 * Cluster the observations and apply a model in each cluster (¿maybe one model for white wine and another model for red wine? ¿use clustering models?)
 * Use linear regression models
