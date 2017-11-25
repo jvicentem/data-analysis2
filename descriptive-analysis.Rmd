@@ -28,19 +28,33 @@ https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequali
 
    Input variables (based on physicochemical tests):
    1 - fixed acidity
+   
    2 - volatile acidity
+   
    3 - citric acid
+   
    4 - residual sugar
+   
    5 - chlorides
+   
    6 - free sulfur dioxide
+   
    7 - total sulfur dioxide -> Removed
+   
    8 - other sulfur dioxide -> Created from 'total sulfur dioxide' - 'free sulfur dioxide'
+   
    9 - density
+   
    10 - pH
+   
    11 - sulphates
+   
    12 - alcohol
+   
    13 - wine_colour
+   
    Output variable (based on sensory data): 
+   
    14 - quality (score between 0 and 10)
    
 4. Relevant Information:
@@ -69,7 +83,11 @@ xda::numSummary(df)
 xda::charSummary(df)
 ```
 
+In this update I introduce the use of bayesian blocks. In a few words: histograms with dynamic binning so you don't have to choose the binning value (which can make the histograms confusing). The dynamic binning values are calculated by optimizing a fitness function, so maybe you should choose a fitness function that suits your problem well. Here we're gonna use the method's default fitness function: "SIC".
+
 ```{r plots}
+plot_bay_blocks(df)
+
 plot_histograms(df)
 
 plot_boxplots(df)
