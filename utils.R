@@ -1,5 +1,6 @@
 library(readr)
 library(tidyverse)
+source('BayesianBlocks.R') # Taken from https://667-per-cm.net/2016/08/01/bayesian-blocks-via-pelt-in-r/
 
 load_data <- function() {
   winequality_red <- read_delim("~/data-analysis2/winequality-red.csv", ";", escape_double = FALSE, trim_ws = TRUE) %>%
@@ -469,4 +470,40 @@ boxplots_quality_colour_wine <- function(df, colour) {
       geom_boxplot(aes(fill = quality)) + 
       ggtitle(paste(colour, ' wine')) 
   )  
+}
+
+plot_bay_blocks <- function(df) {
+
+    bayesianBlocksByPeltHistogramFrom(x=df$`fixed acidity`, add=FALSE, log="", title="",
+                                      xlab="fixed acidity", ylab="counts", interpolate=TRUE,
+                                      xlim=NULL, col="blue", lwd=3, fill="grey", alpha=0.8)
+  
+    bayesianBlocksByPeltHistogramFrom(x=df$`volatile acidity`, add=FALSE, log="", title="",
+                                      xlab="volatile acidity", ylab="counts", interpolate=TRUE,
+                                      xlim=NULL, col="blue", lwd=3, fill="grey", alpha=0.8)
+
+    bayesianBlocksByPeltHistogramFrom(x=df$`citric acid`, add=FALSE, log="", title="",
+                                      xlab="citric acid", ylab="counts", interpolate=TRUE,
+                                      xlim=NULL, col="blue", lwd=3, fill="grey", alpha=0.8)
+
+    bayesianBlocksByPeltHistogramFrom(x=df$`residual sugar`, add=FALSE, log="", title="",
+                                      xlab="residual sugar", ylab="counts", interpolate=TRUE,
+                                      xlim=NULL, col="blue", lwd=3, fill="grey", alpha=0.8)
+
+    bayesianBlocksByPeltHistogramFrom(x=df$`chlorides`, add=FALSE, log="", title="",
+                                      xlab="chlorides", ylab="counts", interpolate=TRUE,
+                                      xlim=NULL, col="blue", lwd=3, fill="grey", alpha=0.8)
+    
+    bayesianBlocksByPeltHistogramFrom(x=df$`free sulfur dioxide`, add=FALSE, log="", title="",
+                                      xlab="free sulfur dioxide", ylab="counts", interpolate=TRUE,
+                                      xlim=NULL, col="blue", lwd=3, fill="grey", alpha=0.8)
+
+    bayesianBlocksByPeltHistogramFrom(x=df$`other sulfur dioxide`, add=FALSE, log="", title="",
+                                      xlab="other sulfur dioxide", ylab="counts", interpolate=TRUE,
+                                      xlim=NULL, col="blue", lwd=3, fill="grey", alpha=0.8)
+
+    bayesianBlocksByPeltHistogramFrom(x=df$`sulphates`, add=FALSE, log="", title="",
+                                      xlab="sulphates", ylab="counts", interpolate=TRUE,
+                                      xlim=NULL, col="blue", lwd=3, fill="grey", alpha=0.8)
+  
 }
