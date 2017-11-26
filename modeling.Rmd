@@ -283,7 +283,7 @@ rf_with_folds <- function(train_df) {
   #                    savePredictions = TRUE
   #                  ),
   #            preProc=c('center', 'scale'),
-  #            tuneGrid=expand.grid(mtry = c(4,6,8,9,10)),
+  #            tuneGrid=expand.grid(mtry = c(4,6,8,9,10), splitrule='variance'),
   #            num.trees=200,
   #            importance='impurity')
   
@@ -311,7 +311,7 @@ rf_with_folds <- function(train_df) {
                savePredictions = TRUE
              ),
              preProc=c('center', 'scale'),
-             tuneGrid=expand.grid(mtry = c(4,6,8,9)),
+             tuneGrid=expand.grid(mtry = c(4,6,8,9), splitrule='variance'),
              num.trees=200,
              always.split.variables=c('volatile.acidity', 'alcohol'),
              importance='impurity')
@@ -333,7 +333,7 @@ rf <- train(y = rf_train_set$quality,
             method='ranger',
             trControl=trainControl(method = 'none', allowParallel = TRUE),
             preProc=c('center', 'scale'),
-            tuneGrid=expand.grid(mtry = 4),
+            tuneGrid=expand.grid(mtry = 4, splitrule='variance'),
             num.trees=200,
             always.split.variables=c('volatile.acidity', 'alcohol'),
             importance='impurity')
