@@ -257,6 +257,8 @@ plot(varImp(cart))
 ```{r rf}
 rf_train_set <- train_set
 names(rf_train_set) <- make.names(names(rf_train_set), unique=TRUE)
+rf_test_set <- test_set
+names(rf_test_set) <- make.names(names(rf_test_set), unique=TRUE)
   
 rf_with_folds <- function(train_df) {
   # 8 is the best value for mtry
@@ -347,6 +349,11 @@ svm_train_set <- train_set %>% mutate(wine_colour = as.factor(wine_colour))
 svm_train_set <- cbind(svm_train_set %>% select(-wine_colour), dummy(svm_train_set$wine_colour, sep="."))
 colnames(svm_train_set) <- c(colnames(svm_train_set)[1:12], c('wine_colour.red', 'wine_colour.white'))
 svm_train_set <- svm_train_set %>% select(-wine_colour.red) # White wine is the majority level so that will be the base level in this dummy variable
+
+svm_test_set <- test_set %>% mutate(wine_colour = as.factor(wine_colour))
+svm_test_set <- cbind(svm_test_set %>% select(-wine_colour), dummy(svm_test_set$wine_colour, sep="."))
+colnames(svm_test_set) <- c(colnames(svm_test_set)[1:12], c('wine_colour.red', 'wine_colour.white'))
+svm_test_set <- svm_test_set %>% select(-wine_colour.red) 
 
 lsvm_with_folds <- function(train_df) {
   # tr <- train(y=train_df$quality,
@@ -528,10 +535,3 @@ plot(varImp(xgb))
 ```
 
 I've removed the less important variables from almost every model to make them more parsimonious and improve the training times having in mind the penalization in prediction this takes. 
-
-Next steps:
-* Try all these models on the test set
-* Use the PCA previously done to speed up xgboost and svms training times
-* Cluster the observations and apply a model in each cluster (¿maybe one model for white wine and another model for red wine? ¿use clustering models?)
-* Use linear regression models
-* Convert this problem into a classification problem
