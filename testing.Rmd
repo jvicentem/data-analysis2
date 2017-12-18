@@ -42,7 +42,8 @@ postResample(pred = predict(xgb, svm_test_set), obs = svm_test_set$quality)
 
 ```
 
-There's a huge gap between test and train metrics for the Random Forest and XGBoost models: they seem to be overfitted. On the other hand, they seem to be the best models.
+There's a huge gap between test and train metrics for the Random Forest and XGBoost models: they seem to be overfitted. I'm gonna take a look at this again because I don't remember those models clearly showed to be that overfitted... Stay tuned.
+On the other hand, they seem to be the best models. 
 
 Linear SVM seems to have a high bias problem.
 
