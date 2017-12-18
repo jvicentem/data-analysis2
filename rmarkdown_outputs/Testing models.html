@@ -226,9 +226,9 @@ $(document).ready(function () {
 ## 0.7371369 0.2932953 0.5843037</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">'Test results'</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] "Test results"</code></pre>
-<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">predict</span><span class="paren">(</span><span class="identifier">cart</span>, <span class="identifier">test_set</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">test_set</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">)</span> </code></pre>
+<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">predict</span><span class="paren">(</span><span class="identifier">cart</span>, <span class="identifier">dev_test</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">dev_test</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">)</span> </code></pre>
 <pre><code>##      RMSE  Rsquared       MAE 
-## 0.7368521 0.2642301 0.5794988</code></pre>
+## 0.7399100 0.2504884 0.5782046</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">''</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] ""</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">'------------- Random Forest ---------------'</span><span class="paren">)</span></code></pre>
@@ -240,9 +240,9 @@ $(document).ready(function () {
 ## 0.2711054 0.9343547 0.1957040</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">'Test results'</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] "Test results"</code></pre>
-<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">predict</span><span class="paren">(</span><span class="identifier">rf</span>, <span class="identifier">rf_test_set</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">rf_test_set</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">)</span></code></pre>
+<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">predict</span><span class="paren">(</span><span class="identifier">rf</span>, <span class="identifier">rf_dev_test</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">rf_dev_test</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">)</span></code></pre>
 <pre><code>##      RMSE  Rsquared       MAE 
-## 0.6003647 0.5141901 0.4370153</code></pre>
+## 0.6010962 0.5079961 0.4373685</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">''</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] ""</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">'-------------- Linear Kernel SVM ---------------'</span><span class="paren">)</span></code></pre>
@@ -254,13 +254,13 @@ $(document).ready(function () {
 ## 0.7390705 0.2911094 0.5709513</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">'Test results'</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] "Test results"</code></pre>
-<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">predict</span><span class="paren">(</span><span class="identifier">lsvm</span>, <span class="identifier">svm_test_set</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">svm_test_set</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">)</span></code></pre>
+<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">predict</span><span class="paren">(</span><span class="identifier">lsvm</span>, <span class="identifier">svm_dev_test</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">svm_dev_test</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">)</span></code></pre>
 <pre><code>##      RMSE  Rsquared       MAE 
-## 0.7244620 0.2899741 0.5611031</code></pre>
+## 0.7312754 0.2715760 0.5690641</code></pre>
 <pre class="r"><code class="r"><span class="comment">#print()</span>
 <span class="comment"># print('------------ Polynomial Kernel SVM -------------')</span>
 <span class="comment"># print('Test results')</span>
-<span class="comment"># postResample(pred = predict(psvm, svm_test_set), obs = svm_test_set$quality)</span>
+<span class="comment"># postResample(pred = predict(psvm, svm_dev_test), obs = svm_dev_test$quality)</span>
 <span class="comment"># It shows an error I don't know how to fix yet :( </span>
 <span class="identifier">print</span><span class="paren">(</span><span class="string">''</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] ""</code></pre>
@@ -274,10 +274,11 @@ $(document).ready(function () {
 ## 0.07833479 0.99307606 0.05548044</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">'Test results'</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] "Test results"</code></pre>
-<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">predict</span><span class="paren">(</span><span class="identifier">xgb</span>, <span class="identifier">svm_test_set</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">svm_test_set</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">)</span></code></pre>
+<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">predict</span><span class="paren">(</span><span class="identifier">xgb</span>, <span class="identifier">svm_dev_test</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">svm_dev_test</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">)</span></code></pre>
 <pre><code>##      RMSE  Rsquared       MAE 
-## 0.6240408 0.4827154 0.4343862</code></pre>
+## 0.6257842 0.4721341 0.4321812</code></pre>
 <p>There’s a huge gap between test and train metrics for the Random Forest and XGBoost models: they seem to be overfitted. On the other hand, they seem to be the best models.</p>
+<p>In modeling.Rmd you can see a report of each fold. Here you can see error metrics for every model as a whole (training cases).</p>
 <p>Linear SVM seems to have a high bias problem.</p>
 <p>Since quality values are integers, I’m gonna try now to round the predicted values and check the performance metrics again.</p>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">'------------- CART ---------------'</span><span class="paren">)</span></code></pre>
@@ -289,9 +290,9 @@ $(document).ready(function () {
 ## 0.7916179 0.2413601 0.5185613</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">'Test results'</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] "Test results"</code></pre>
-<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">round</span><span class="paren">(</span><span class="identifier">predict</span><span class="paren">(</span><span class="identifier">cart</span>, <span class="identifier">test_set</span><span class="paren">)</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">test_set</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">)</span> </code></pre>
+<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">round</span><span class="paren">(</span><span class="identifier">predict</span><span class="paren">(</span><span class="identifier">cart</span>, <span class="identifier">dev_test</span><span class="paren">)</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">dev_test</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">)</span> </code></pre>
 <pre><code>##      RMSE  Rsquared       MAE 
-## 0.8015778 0.2051587 0.5269646</code></pre>
+## 0.8057486 0.1909388 0.5323077</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">''</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] ""</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">'------------- Random Forest ---------------'</span><span class="paren">)</span></code></pre>
@@ -303,9 +304,9 @@ $(document).ready(function () {
 ## 0.27177262 0.90841890 0.07347567</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">'Test results'</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] "Test results"</code></pre>
-<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">round</span><span class="paren">(</span><span class="identifier">predict</span><span class="paren">(</span><span class="identifier">rf</span>, <span class="identifier">rf_test_set</span><span class="paren">)</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">rf_test_set</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">)</span></code></pre>
+<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">round</span><span class="paren">(</span><span class="identifier">predict</span><span class="paren">(</span><span class="identifier">rf</span>, <span class="identifier">rf_dev_test</span><span class="paren">)</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">rf_dev_test</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">)</span></code></pre>
 <pre><code>##      RMSE  Rsquared       MAE 
-## 0.6491668 0.4421641 0.3582435</code></pre>
+## 0.6456958 0.4417764 0.3553846</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">''</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] ""</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">'-------------- Linear Kernel SVM ---------------'</span><span class="paren">)</span></code></pre>
@@ -317,13 +318,13 @@ $(document).ready(function () {
 ## 0.7907671 0.2185192 0.5156761</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">'Test results'</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] "Test results"</code></pre>
-<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">round</span><span class="paren">(</span><span class="identifier">predict</span><span class="paren">(</span><span class="identifier">lsvm</span>, <span class="identifier">svm_test_set</span><span class="paren">)</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">svm_test_set</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">)</span></code></pre>
+<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">round</span><span class="paren">(</span><span class="identifier">predict</span><span class="paren">(</span><span class="identifier">lsvm</span>, <span class="identifier">svm_dev_test</span><span class="paren">)</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">svm_dev_test</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">)</span></code></pre>
 <pre><code>##      RMSE  Rsquared       MAE 
-## 0.7737010 0.2266599 0.4984592</code></pre>
+## 0.7825009 0.2122053 0.5076923</code></pre>
 <pre class="r"><code class="r"><span class="comment">#print()</span>
 <span class="comment"># print('------------ Polynomial Kernel SVM -------------')</span>
 <span class="comment"># print('Test results')</span>
-<span class="comment"># postResample(pred = predict(psvm, svm_test_set), obs = svm_test_set$quality)</span>
+<span class="comment"># postResample(pred = predict(psvm, svm_dev_test), obs = svm_dev_test$quality)</span>
 <span class="comment"># It shows an error I don't know how to fix yet :( </span>
 <span class="identifier">print</span><span class="paren">(</span><span class="string">''</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] ""</code></pre>
@@ -337,13 +338,13 @@ $(document).ready(function () {
 ##        0        1        0</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">'Test results'</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] "Test results"</code></pre>
-<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">round</span><span class="paren">(</span><span class="identifier">predict</span><span class="paren">(</span><span class="identifier">xgb</span>, <span class="identifier">svm_test_set</span><span class="paren">)</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">svm_test_set</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">)</span></code></pre>
+<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">round</span><span class="paren">(</span><span class="identifier">predict</span><span class="paren">(</span><span class="identifier">xgb</span>, <span class="identifier">svm_dev_test</span><span class="paren">)</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">svm_dev_test</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">)</span></code></pre>
 <pre><code>##      RMSE  Rsquared       MAE 
-## 0.6585926 0.4510615 0.3705701</code></pre>
+## 0.6504436 0.4515366 0.3584615</code></pre>
 <p>The results are similar. I don’t know what the baseline error metric values should be since I’m not a wine expert and I haven’t read about previous work with this dataset but RMSE and MAE values don’t look too bad to me. However, R² values are very very poor.</p>
 <p>I’m gonna dig in a little more and see how the models perform depending on the wine color. From now on I’ll round the predicted values.</p>
 <pre class="r"><code class="r"><span class="identifier">red_wine_indexes_tr</span> <span class="operator">&lt;-</span> <span class="identifier">which</span><span class="paren">(</span><span class="identifier">train_set</span><span class="operator">$</span><span class="identifier">wine_colour</span> <span class="operator">==</span> <span class="string">'red'</span><span class="paren">)</span>
-<span class="identifier">red_wine_indexes_te</span> <span class="operator">&lt;-</span> <span class="identifier">which</span><span class="paren">(</span><span class="identifier">test_set</span><span class="operator">$</span><span class="identifier">wine_colour</span> <span class="operator">==</span> <span class="string">'red'</span><span class="paren">)</span>
+<span class="identifier">red_wine_indexes_te</span> <span class="operator">&lt;-</span> <span class="identifier">which</span><span class="paren">(</span><span class="identifier">dev_test</span><span class="operator">$</span><span class="identifier">wine_colour</span> <span class="operator">==</span> <span class="string">'red'</span><span class="paren">)</span>
 <span class="identifier">print</span><span class="paren">(</span><span class="string">'Red wine:'</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] "Red wine:"</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">'------------- CART ---------------'</span><span class="paren">)</span></code></pre>
@@ -355,9 +356,9 @@ $(document).ready(function () {
 ## 0.7437004 0.2262944 0.4675119</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">'Test results'</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] "Test results"</code></pre>
-<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">round</span><span class="paren">(</span><span class="identifier">predict</span><span class="paren">(</span><span class="identifier">cart</span>, <span class="identifier">test_set</span><span class="paren">[</span><span class="identifier">red_wine_indexes_te</span>,<span class="paren">]</span><span class="paren">)</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">test_set</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">[</span><span class="identifier">red_wine_indexes_te</span><span class="paren">]</span><span class="paren">)</span> </code></pre>
+<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">round</span><span class="paren">(</span><span class="identifier">predict</span><span class="paren">(</span><span class="identifier">cart</span>, <span class="identifier">dev_test</span><span class="paren">[</span><span class="identifier">red_wine_indexes_te</span>,<span class="paren">]</span><span class="paren">)</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">dev_test</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">[</span><span class="identifier">red_wine_indexes_te</span><span class="paren">]</span><span class="paren">)</span> </code></pre>
 <pre><code>##      RMSE  Rsquared       MAE 
-## 0.7875138 0.1753099 0.5192878</code></pre>
+## 0.8306976 0.1328440 0.5614035</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">''</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] ""</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">'------------- Random Forest ---------------'</span><span class="paren">)</span></code></pre>
@@ -369,9 +370,9 @@ $(document).ready(function () {
 ## 0.27724019 0.88588650 0.07686212</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">'Test results'</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] "Test results"</code></pre>
-<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">round</span><span class="paren">(</span><span class="identifier">predict</span><span class="paren">(</span><span class="identifier">rf</span>, <span class="identifier">rf_test_set</span><span class="paren">[</span><span class="identifier">red_wine_indexes_te</span>,<span class="paren">]</span><span class="paren">)</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">rf_test_set</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">[</span><span class="identifier">red_wine_indexes_te</span><span class="paren">]</span><span class="paren">)</span></code></pre>
+<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">round</span><span class="paren">(</span><span class="identifier">predict</span><span class="paren">(</span><span class="identifier">rf</span>, <span class="identifier">rf_dev_test</span><span class="paren">[</span><span class="identifier">red_wine_indexes_te</span>,<span class="paren">]</span><span class="paren">)</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">rf_dev_test</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">[</span><span class="identifier">red_wine_indexes_te</span><span class="paren">]</span><span class="paren">)</span></code></pre>
 <pre><code>##      RMSE  Rsquared       MAE 
-## 0.6399184 0.4110700 0.3679525</code></pre>
+## 0.6710383 0.3795505 0.3918129</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">''</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] ""</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">'-------------- Linear Kernel SVM ---------------'</span><span class="paren">)</span></code></pre>
@@ -383,13 +384,13 @@ $(document).ready(function () {
 ## 0.7143536 0.2730033 0.4405705</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">'Test results'</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] "Test results"</code></pre>
-<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">round</span><span class="paren">(</span><span class="identifier">predict</span><span class="paren">(</span><span class="identifier">lsvm</span>, <span class="identifier">svm_test_set</span><span class="paren">[</span><span class="identifier">red_wine_indexes_te</span>,<span class="paren">]</span><span class="paren">)</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">svm_test_set</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">[</span><span class="identifier">red_wine_indexes_te</span><span class="paren">]</span><span class="paren">)</span></code></pre>
+<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">round</span><span class="paren">(</span><span class="identifier">predict</span><span class="paren">(</span><span class="identifier">lsvm</span>, <span class="identifier">svm_dev_test</span><span class="paren">[</span><span class="identifier">red_wine_indexes_te</span>,<span class="paren">]</span><span class="paren">)</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">svm_dev_test</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">[</span><span class="identifier">red_wine_indexes_te</span><span class="paren">]</span><span class="paren">)</span></code></pre>
 <pre><code>##      RMSE  Rsquared       MAE 
-## 0.7102472 0.3087035 0.4569733</code></pre>
+## 0.7414227 0.2792425 0.4912281</code></pre>
 <pre class="r"><code class="r"><span class="comment">#print()</span>
 <span class="comment"># print('------------ Polynomial Kernel SVM -------------')</span>
 <span class="comment"># print('Test results')</span>
-<span class="comment"># postResample(pred = predict(psvm, svm_test_set), obs = svm_test_set$quality)</span>
+<span class="comment"># postResample(pred = predict(psvm, svm_dev_test), obs = svm_dev_test$quality)</span>
 <span class="comment"># It shows an error I don't know how to fix yet :( </span>
 <span class="identifier">print</span><span class="paren">(</span><span class="string">''</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] ""</code></pre>
@@ -403,9 +404,9 @@ $(document).ready(function () {
 ##        0        1        0</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">'Test results'</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] "Test results"</code></pre>
-<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">round</span><span class="paren">(</span><span class="identifier">predict</span><span class="paren">(</span><span class="identifier">xgb</span>, <span class="identifier">svm_test_set</span><span class="paren">[</span><span class="identifier">red_wine_indexes_te</span>,<span class="paren">]</span><span class="paren">)</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">svm_test_set</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">[</span><span class="identifier">red_wine_indexes_te</span><span class="paren">]</span><span class="paren">)</span></code></pre>
+<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">round</span><span class="paren">(</span><span class="identifier">predict</span><span class="paren">(</span><span class="identifier">xgb</span>, <span class="identifier">svm_dev_test</span><span class="paren">[</span><span class="identifier">red_wine_indexes_te</span>,<span class="paren">]</span><span class="paren">)</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">svm_dev_test</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">[</span><span class="identifier">red_wine_indexes_te</span><span class="paren">]</span><span class="paren">)</span></code></pre>
 <pre><code>##      RMSE  Rsquared       MAE 
-## 0.6559475 0.3961135 0.3768546</code></pre>
+## 0.6488857 0.4137549 0.3742690</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">''</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] ""</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">''</span><span class="paren">)</span></code></pre>
@@ -419,7 +420,7 @@ $(document).ready(function () {
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">''</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] ""</code></pre>
 <pre class="r"><code class="r"><span class="identifier">white_wine_indexes_tr</span> <span class="operator">&lt;-</span> <span class="identifier">which</span><span class="paren">(</span><span class="identifier">train_set</span><span class="operator">$</span><span class="identifier">wine_colour</span> <span class="operator">==</span> <span class="string">'white'</span><span class="paren">)</span>
-<span class="identifier">white_wine_indexes_te</span> <span class="operator">&lt;-</span> <span class="identifier">which</span><span class="paren">(</span><span class="identifier">test_set</span><span class="operator">$</span><span class="identifier">wine_colour</span> <span class="operator">==</span> <span class="string">'white'</span><span class="paren">)</span>
+<span class="identifier">white_wine_indexes_te</span> <span class="operator">&lt;-</span> <span class="identifier">which</span><span class="paren">(</span><span class="identifier">dev_test</span><span class="operator">$</span><span class="identifier">wine_colour</span> <span class="operator">==</span> <span class="string">'white'</span><span class="paren">)</span>
 <span class="identifier">print</span><span class="paren">(</span><span class="string">'White wine:'</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] "White wine:"</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">'------------- CART ---------------'</span><span class="paren">)</span></code></pre>
@@ -431,9 +432,9 @@ $(document).ready(function () {
 ## 0.8063754 0.2325700 0.5349251</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">'Test results'</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] "Test results"</code></pre>
-<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">round</span><span class="paren">(</span><span class="identifier">predict</span><span class="paren">(</span><span class="identifier">cart</span>, <span class="identifier">test_set</span><span class="paren">[</span><span class="identifier">white_wine_indexes_te</span>,<span class="paren">]</span><span class="paren">)</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">test_set</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">[</span><span class="identifier">white_wine_indexes_te</span><span class="paren">]</span><span class="paren">)</span> </code></pre>
+<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">round</span><span class="paren">(</span><span class="identifier">predict</span><span class="paren">(</span><span class="identifier">cart</span>, <span class="identifier">dev_test</span><span class="paren">[</span><span class="identifier">white_wine_indexes_te</span>,<span class="paren">]</span><span class="paren">)</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">dev_test</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">[</span><span class="identifier">white_wine_indexes_te</span><span class="paren">]</span><span class="paren">)</span> </code></pre>
 <pre><code>##      RMSE  Rsquared       MAE 
-## 0.8064516 0.2031912 0.5296566</code></pre>
+## 0.7966527 0.1979949 0.5219207</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">''</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] ""</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">'------------- Random Forest ---------------'</span><span class="paren">)</span></code></pre>
@@ -445,9 +446,9 @@ $(document).ready(function () {
 ## 0.30112818 0.89210578 0.08966218</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">'Test results'</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] "Test results"</code></pre>
-<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">round</span><span class="paren">(</span><span class="identifier">predict</span><span class="paren">(</span><span class="identifier">rf</span>, <span class="identifier">rf_test_set</span><span class="paren">[</span><span class="identifier">white_wine_indexes_te</span>,<span class="paren">]</span><span class="paren">)</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">rf_test_set</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">[</span><span class="identifier">white_wine_indexes_te</span><span class="paren">]</span><span class="paren">)</span></code></pre>
+<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">round</span><span class="paren">(</span><span class="identifier">predict</span><span class="paren">(</span><span class="identifier">rf</span>, <span class="identifier">rf_dev_test</span><span class="paren">[</span><span class="identifier">white_wine_indexes_te</span>,<span class="paren">]</span><span class="paren">)</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">rf_dev_test</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">[</span><span class="identifier">white_wine_indexes_te</span><span class="paren">]</span><span class="paren">)</span></code></pre>
 <pre><code>##      RMSE  Rsquared       MAE 
-## 0.6626658 0.4256834 0.3621228</code></pre>
+## 0.6493935 0.4313277 0.3465553</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">''</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] ""</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">'-------------- Linear Kernel SVM ---------------'</span><span class="paren">)</span></code></pre>
@@ -459,13 +460,13 @@ $(document).ready(function () {
 ## 0.8137440 0.1905075 0.5397511</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">'Test results'</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] "Test results"</code></pre>
-<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">round</span><span class="paren">(</span><span class="identifier">predict</span><span class="paren">(</span><span class="identifier">lsvm</span>, <span class="identifier">svm_test_set</span><span class="paren">[</span><span class="identifier">white_wine_indexes_te</span>,<span class="paren">]</span><span class="paren">)</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">svm_test_set</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">[</span><span class="identifier">white_wine_indexes_te</span><span class="paren">]</span><span class="paren">)</span></code></pre>
+<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">round</span><span class="paren">(</span><span class="identifier">predict</span><span class="paren">(</span><span class="identifier">lsvm</span>, <span class="identifier">svm_dev_test</span><span class="paren">[</span><span class="identifier">white_wine_indexes_te</span>,<span class="paren">]</span><span class="paren">)</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">svm_dev_test</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">[</span><span class="identifier">white_wine_indexes_te</span><span class="paren">]</span><span class="paren">)</span></code></pre>
 <pre><code>##      RMSE  Rsquared       MAE 
-## 0.7947539 0.1889289 0.5130073</code></pre>
+## 0.7966527 0.1746885 0.5135699</code></pre>
 <pre class="r"><code class="r"><span class="comment">#print()</span>
 <span class="comment"># print('------------ Polynomial Kernel SVM -------------')</span>
 <span class="comment"># print('Test results')</span>
-<span class="comment"># postResample(pred = predict(psvm, svm_test_set), obs = svm_test_set$quality)</span>
+<span class="comment"># postResample(pred = predict(psvm, svm_dev_test), obs = svm_dev_test$quality)</span>
 <span class="comment"># It shows an error I don't know how to fix yet :( </span>
 <span class="identifier">print</span><span class="paren">(</span><span class="string">'----------- XGBoost -------------'</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] "----------- XGBoost -------------"</code></pre>
@@ -477,11 +478,11 @@ $(document).ready(function () {
 ##        0        1        0</code></pre>
 <pre class="r"><code class="r"><span class="identifier">print</span><span class="paren">(</span><span class="string">'Test results'</span><span class="paren">)</span></code></pre>
 <pre><code>## [1] "Test results"</code></pre>
-<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">round</span><span class="paren">(</span><span class="identifier">predict</span><span class="paren">(</span><span class="identifier">xgb</span>, <span class="identifier">svm_test_set</span><span class="paren">[</span><span class="identifier">white_wine_indexes_te</span>,<span class="paren">]</span><span class="paren">)</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">svm_test_set</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">[</span><span class="identifier">white_wine_indexes_te</span><span class="paren">]</span><span class="paren">)</span></code></pre>
+<pre class="r"><code class="r"><span class="identifier">postResample</span><span class="paren">(</span><span class="identifier">pred</span> <span class="operator">=</span> <span class="identifier">round</span><span class="paren">(</span><span class="identifier">predict</span><span class="paren">(</span><span class="identifier">xgb</span>, <span class="identifier">svm_dev_test</span><span class="paren">[</span><span class="identifier">white_wine_indexes_te</span>,<span class="paren">]</span><span class="paren">)</span><span class="paren">)</span>, <span class="identifier">obs</span> <span class="operator">=</span> <span class="identifier">svm_dev_test</span><span class="operator">$</span><span class="identifier">quality</span><span class="paren">[</span><span class="identifier">white_wine_indexes_te</span><span class="paren">]</span><span class="paren">)</span></code></pre>
 <pre><code>##      RMSE  Rsquared       MAE 
-## 0.6595177 0.4595755 0.3683663</code></pre>
+## 0.6509989 0.4534413 0.3528184</code></pre>
 <p>There are higher error values in the white wine observations than in the red wine observations. Anyway, there’s not a big difference between the two types of wine in terms of model error values.</p>
-<p>Next steps: * Apply other transformations to the variables. * Use the PCA previously done to speed up xgboost and svms training times * Cluster the observations and apply a model in each cluster (¿maybe one model for white wine and another model for red wine?) * Use linear regression models * Convert this problem into a classification problem</p>
+<p>Next steps: * Solve this problem as a multiclass classification problem as the output variable is has discrete values * Apply other transformations to the variables. * Use the PCA previously done to speed up xgboost and svms training times * Cluster the observations and apply a model in each cluster (¿maybe one model for white wine and another model for red wine?)</p>
 
 
 

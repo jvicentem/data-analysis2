@@ -7,6 +7,8 @@ output: html_document
 
 ```{r setup, include=FALSE}
 library(caret)
+
+load('./workspaceData.RData')
 ```
 
 ```{r testing-models}
@@ -14,23 +16,23 @@ print('------------- CART ---------------')
 print('Train results')
 postResample(pred = predict(cart, train_set), obs = train_set$quality) 
 print('Test results')
-postResample(pred = predict(cart, test_set), obs = test_set$quality) 
+postResample(pred = predict(cart, dev_test), obs = dev_test$quality) 
 print('')
 print('------------- Random Forest ---------------')
 print('Train results')
 postResample(pred = predict(rf, rf_train_set), obs = rf_train_set$quality)
 print('Test results')
-postResample(pred = predict(rf, rf_test_set), obs = rf_test_set$quality)
+postResample(pred = predict(rf, rf_dev_test), obs = rf_dev_test$quality)
 print('')
 print('-------------- Linear Kernel SVM ---------------')
 print('Train results')
 postResample(pred = predict(lsvm, svm_train_set), obs = svm_train_set$quality)
 print('Test results')
-postResample(pred = predict(lsvm, svm_test_set), obs = svm_test_set$quality)
+postResample(pred = predict(lsvm, svm_dev_test), obs = svm_dev_test$quality)
 #print()
 # print('------------ Polynomial Kernel SVM -------------')
 # print('Test results')
-# postResample(pred = predict(psvm, svm_test_set), obs = svm_test_set$quality)
+# postResample(pred = predict(psvm, svm_dev_test), obs = svm_dev_test$quality)
 # It shows an error I don't know how to fix yet :( 
 print('')
 print('----------- XGBoost -------------')
@@ -38,11 +40,14 @@ print('----------- XGBoost -------------')
 print('Train results')
 postResample(pred = predict(xgb, svm_train_set), obs = svm_train_set$quality)
 print('Test results')
-postResample(pred = predict(xgb, svm_test_set), obs = svm_test_set$quality)
+postResample(pred = predict(xgb, svm_dev_test), obs = svm_dev_test$quality)
 
 ```
 
-There's a huge gap between test and train metrics for the Random Forest and XGBoost models: they seem to be overfitted. On the other hand, they seem to be the best models.
+There's a huge gap between test and train metrics for the Random Forest and XGBoost models: they seem to be overfitted. 
+On the other hand, they seem to be the best models. 
+
+In modeling.Rmd you can see a report of each fold. Here you can see error metrics for every model as a whole (training cases).
 
 Linear SVM seems to have a high bias problem.
 
@@ -53,23 +58,23 @@ print('------------- CART ---------------')
 print('Train results')
 postResample(pred = round(predict(cart, train_set)), obs = train_set$quality) 
 print('Test results')
-postResample(pred = round(predict(cart, test_set)), obs = test_set$quality) 
+postResample(pred = round(predict(cart, dev_test)), obs = dev_test$quality) 
 print('')
 print('------------- Random Forest ---------------')
 print('Train results')
 postResample(pred = round(predict(rf, rf_train_set)), obs = rf_train_set$quality)
 print('Test results')
-postResample(pred = round(predict(rf, rf_test_set)), obs = rf_test_set$quality)
+postResample(pred = round(predict(rf, rf_dev_test)), obs = rf_dev_test$quality)
 print('')
 print('-------------- Linear Kernel SVM ---------------')
 print('Train results')
 postResample(pred = round(predict(lsvm, svm_train_set)), obs = svm_train_set$quality)
 print('Test results')
-postResample(pred = round(predict(lsvm, svm_test_set)), obs = svm_test_set$quality)
+postResample(pred = round(predict(lsvm, svm_dev_test)), obs = svm_dev_test$quality)
 #print()
 # print('------------ Polynomial Kernel SVM -------------')
 # print('Test results')
-# postResample(pred = predict(psvm, svm_test_set), obs = svm_test_set$quality)
+# postResample(pred = predict(psvm, svm_dev_test), obs = svm_dev_test$quality)
 # It shows an error I don't know how to fix yet :( 
 print('')
 print('----------- XGBoost -------------')
@@ -77,7 +82,7 @@ print('----------- XGBoost -------------')
 print('Train results')
 postResample(pred = round(predict(xgb, svm_train_set)), obs = svm_train_set$quality)
 print('Test results')
-postResample(pred = round(predict(xgb, svm_test_set)), obs = svm_test_set$quality)
+postResample(pred = round(predict(xgb, svm_dev_test)), obs = svm_dev_test$quality)
 
 ```
 
@@ -87,29 +92,29 @@ I'm gonna dig in a little more and see how the models perform depending on the w
 
 ```{r testing-models-colour}
 red_wine_indexes_tr <- which(train_set$wine_colour == 'red')
-red_wine_indexes_te <- which(test_set$wine_colour == 'red')
+red_wine_indexes_te <- which(dev_test$wine_colour == 'red')
 print('Red wine:')
 print('------------- CART ---------------')
 print('Train results')
 postResample(pred = round(predict(cart, train_set[red_wine_indexes_tr,])), obs = train_set$quality[red_wine_indexes_tr]) 
 print('Test results')
-postResample(pred = round(predict(cart, test_set[red_wine_indexes_te,])), obs = test_set$quality[red_wine_indexes_te]) 
+postResample(pred = round(predict(cart, dev_test[red_wine_indexes_te,])), obs = dev_test$quality[red_wine_indexes_te]) 
 print('')
 print('------------- Random Forest ---------------')
 print('Train results')
 postResample(pred = round(predict(rf, rf_train_set[red_wine_indexes_tr,])), obs = rf_train_set$quality[red_wine_indexes_tr])
 print('Test results')
-postResample(pred = round(predict(rf, rf_test_set[red_wine_indexes_te,])), obs = rf_test_set$quality[red_wine_indexes_te])
+postResample(pred = round(predict(rf, rf_dev_test[red_wine_indexes_te,])), obs = rf_dev_test$quality[red_wine_indexes_te])
 print('')
 print('-------------- Linear Kernel SVM ---------------')
 print('Train results')
 postResample(pred = round(predict(lsvm, svm_train_set[red_wine_indexes_tr,])), obs = svm_train_set$quality[red_wine_indexes_tr])
 print('Test results')
-postResample(pred = round(predict(lsvm, svm_test_set[red_wine_indexes_te,])), obs = svm_test_set$quality[red_wine_indexes_te])
+postResample(pred = round(predict(lsvm, svm_dev_test[red_wine_indexes_te,])), obs = svm_dev_test$quality[red_wine_indexes_te])
 #print()
 # print('------------ Polynomial Kernel SVM -------------')
 # print('Test results')
-# postResample(pred = predict(psvm, svm_test_set), obs = svm_test_set$quality)
+# postResample(pred = predict(psvm, svm_dev_test), obs = svm_dev_test$quality)
 # It shows an error I don't know how to fix yet :( 
 print('')
 print('----------- XGBoost -------------')
@@ -117,7 +122,7 @@ print('----------- XGBoost -------------')
 print('Train results')
 postResample(pred = round(predict(xgb, svm_train_set[red_wine_indexes_tr,])), obs = svm_train_set$quality[red_wine_indexes_tr])
 print('Test results')
-postResample(pred = round(predict(xgb, svm_test_set[red_wine_indexes_te,])), obs = svm_test_set$quality[red_wine_indexes_te])
+postResample(pred = round(predict(xgb, svm_dev_test[red_wine_indexes_te,])), obs = svm_dev_test$quality[red_wine_indexes_te])
 
 
 print('')
@@ -128,43 +133,42 @@ print('')
 print('')
 
 white_wine_indexes_tr <- which(train_set$wine_colour == 'white')
-white_wine_indexes_te <- which(test_set$wine_colour == 'white')
+white_wine_indexes_te <- which(dev_test$wine_colour == 'white')
 print('White wine:')
 print('------------- CART ---------------')
 print('Train results')
 postResample(pred = round(predict(cart, train_set[white_wine_indexes_tr,])), obs = train_set$quality[white_wine_indexes_tr]) 
 print('Test results')
-postResample(pred = round(predict(cart, test_set[white_wine_indexes_te,])), obs = test_set$quality[white_wine_indexes_te]) 
+postResample(pred = round(predict(cart, dev_test[white_wine_indexes_te,])), obs = dev_test$quality[white_wine_indexes_te]) 
 print('')
 print('------------- Random Forest ---------------')
 print('Train results')
 postResample(pred = round(predict(rf, rf_train_set[white_wine_indexes_tr,])), obs = rf_train_set$quality[white_wine_indexes_tr])
 print('Test results')
-postResample(pred = round(predict(rf, rf_test_set[white_wine_indexes_te,])), obs = rf_test_set$quality[white_wine_indexes_te])
+postResample(pred = round(predict(rf, rf_dev_test[white_wine_indexes_te,])), obs = rf_dev_test$quality[white_wine_indexes_te])
 print('')
 print('-------------- Linear Kernel SVM ---------------')
 print('Train results')
 postResample(pred = round(predict(lsvm, svm_train_set[white_wine_indexes_tr,])), obs = svm_train_set$quality[white_wine_indexes_tr])
 print('Test results')
-postResample(pred = round(predict(lsvm, svm_test_set[white_wine_indexes_te,])), obs = svm_test_set$quality[white_wine_indexes_te])
+postResample(pred = round(predict(lsvm, svm_dev_test[white_wine_indexes_te,])), obs = svm_dev_test$quality[white_wine_indexes_te])
 #print()
 # print('------------ Polynomial Kernel SVM -------------')
 # print('Test results')
-# postResample(pred = predict(psvm, svm_test_set), obs = svm_test_set$quality)
+# postResample(pred = predict(psvm, svm_dev_test), obs = svm_dev_test$quality)
 # It shows an error I don't know how to fix yet :( 
 print('----------- XGBoost -------------')
 # Modifications made on svm test set work for xgb model
 print('Train results')
 postResample(pred = round(predict(xgb, svm_train_set[white_wine_indexes_tr,])), obs = svm_train_set$quality[white_wine_indexes_tr])
 print('Test results')
-postResample(pred = round(predict(xgb, svm_test_set[white_wine_indexes_te,])), obs = svm_test_set$quality[white_wine_indexes_te])
+postResample(pred = round(predict(xgb, svm_dev_test[white_wine_indexes_te,])), obs = svm_dev_test$quality[white_wine_indexes_te])
 ```
 
 There are higher error values in the white wine observations than in the red wine observations. Anyway, there's not a big difference between the two types of wine in terms of model error values.
 
 Next steps:
+* Solve this problem as a multiclass classification problem as the output variable is has discrete values
 * Apply other transformations to the variables.
 * Use the PCA previously done to speed up xgboost and svms training times
 * Cluster the observations and apply a model in each cluster (¿maybe one model for white wine and another model for red wine?)
-* Use linear regression models
-* Convert this problem into a classification problem

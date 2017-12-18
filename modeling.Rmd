@@ -257,8 +257,8 @@ plot(varImp(cart))
 ```{r rf}
 rf_train_set <- train_set
 names(rf_train_set) <- make.names(names(rf_train_set), unique=TRUE)
-rf_test_set <- test_set
-names(rf_test_set) <- make.names(names(rf_test_set), unique=TRUE)
+rf_dev_test <- dev_test
+names(rf_dev_test) <- make.names(names(rf_dev_test), unique=TRUE)
   
 rf_with_folds <- function(train_df) {
   # 8 is the best value for mtry
@@ -325,7 +325,7 @@ rf_with_folds <- function(train_df) {
   return(tr)
 }
 
-error_metrics_rf <- rf_with_folds(rf_train_set)
+error_metrics_rf <- rf_with_folds(rf_train_set)$resample
 
 mean_median_errors(error_metrics_rf)
 
@@ -350,10 +350,10 @@ svm_train_set <- cbind(svm_train_set %>% select(-wine_colour), dummy(svm_train_s
 colnames(svm_train_set) <- c(colnames(svm_train_set)[1:12], c('wine_colour.red', 'wine_colour.white'))
 svm_train_set <- svm_train_set %>% select(-wine_colour.red) # White wine is the majority level so that will be the base level in this dummy variable
 
-svm_test_set <- test_set %>% mutate(wine_colour = as.factor(wine_colour))
-svm_test_set <- cbind(svm_test_set %>% select(-wine_colour), dummy(svm_test_set$wine_colour, sep="."))
-colnames(svm_test_set) <- c(colnames(svm_test_set)[1:12], c('wine_colour.red', 'wine_colour.white'))
-svm_test_set <- svm_test_set %>% select(-wine_colour.red) 
+svm_dev_test <- dev_test %>% mutate(wine_colour = as.factor(wine_colour))
+svm_dev_test <- cbind(svm_dev_test %>% select(-wine_colour), dummy(svm_dev_test$wine_colour, sep="."))
+colnames(svm_dev_test) <- c(colnames(svm_dev_test)[1:12], c('wine_colour.red', 'wine_colour.white'))
+svm_dev_test <- svm_dev_test %>% select(-wine_colour.red) 
 
 lsvm_with_folds <- function(train_df) {
   # tr <- train(y=train_df$quality,
@@ -431,54 +431,54 @@ plot(varImp(lsvm))
 ```
 
 ```{r psvm}
-psvm_with_folds <- function(train_df) {
-  tr <- train(y = train_df$quality,
-              x = train_df %>% select(-quality),
-              method='svmPoly',
-              trControl=trainControl(method = 'cv', allowParallel = TRUE,
-                index=list(
-                  f_1 = all_indexes[-folds_indexes$Fold1],
-                  f_2 = all_indexes[-folds_indexes$Fold2],
-                  f_3 = all_indexes[-folds_indexes$Fold3],
-                  f_4 = all_indexes[-folds_indexes$Fold4],
-                  f_5 = all_indexes[-folds_indexes$Fold5]
-                ),
-                indexOut=list(
-                  f_1 = folds_indexes$Fold1,
-                  f_2 = folds_indexes$Fold2,
-                  f_3 = folds_indexes$Fold3,
-                  f_4 = folds_indexes$Fold4,
-                  f_5 = folds_indexes$Fold5
-                ),
-                verboseIter = TRUE,
-                savePredictions = TRUE
-              ),
-              preProcess=c('center', 'scale'),
-              tuneGrid=expand.grid(C=c(0, 0.01, 0.1, 0.015, 0.02, 1), degree=c(2, 4, 6), scale=c(1))
-        )  
-  
-  print(tr$resample)
-  print('Best tune')
-  print(tr$bestTune)
-  
-  return(tr)
-}
-
-psvm_train <- psvm_with_folds(svm_train_set)
-error_metrics_psvm <- psvm_train$resample
-
-mean_median_errors(error_metrics_psvm)
-
-psvm <- train(y=svm_train_set$quality,
-              x=svm_train_set %>% select (-quality, -pH),
-              method='svmPoly',
-              trControl=trainControl(method = 'none', allowParallel = TRUE),
-              preProc=c('center', 'scale'),
-              tuneGrid=expand.grid(C=c(0.01), degree=c(2), scale=c(1))
-             )
-
-varImp(psvm)
-plot(varImp(psvm))
+# psvm_with_folds <- function(train_df) {
+#   tr <- train(y = train_df$quality,
+#               x = train_df %>% select(-quality),
+#               method='svmPoly',
+#               trControl=trainControl(method = 'cv', allowParallel = TRUE,
+#                 index=list(
+#                   f_1 = all_indexes[-folds_indexes$Fold1],
+#                   f_2 = all_indexes[-folds_indexes$Fold2],
+#                   f_3 = all_indexes[-folds_indexes$Fold3],
+#                   f_4 = all_indexes[-folds_indexes$Fold4],
+#                   f_5 = all_indexes[-folds_indexes$Fold5]
+#                 ),
+#                 indexOut=list(
+#                   f_1 = folds_indexes$Fold1,
+#                   f_2 = folds_indexes$Fold2,
+#                   f_3 = folds_indexes$Fold3,
+#                   f_4 = folds_indexes$Fold4,
+#                   f_5 = folds_indexes$Fold5
+#                 ),
+#                 verboseIter = TRUE,
+#                 savePredictions = TRUE
+#               ),
+#               preProcess=c('center', 'scale'),
+#               tuneGrid=expand.grid(C=c(0, 0.01, 0.1, 0.015, 0.02, 1), degree=c(2, 4, 6), scale=c(1))
+#         )  
+#   
+#   print(tr$resample)
+#   print('Best tune')
+#   print(tr$bestTune)
+#   
+#   return(tr)
+# }
+# 
+# psvm_train <- psvm_with_folds(svm_train_set[1:5,])
+# error_metrics_psvm <- psvm_train$resample
+# 
+# mean_median_errors(error_metrics_psvm)
+# 
+# psvm <- train(y=svm_train_set$quality,
+#               x=svm_train_set %>% select (-quality, -pH),
+#               method='svmPoly',
+#               trControl=trainControl(method = 'none', allowParallel = TRUE),
+#               preProc=c('center', 'scale'),
+#               tuneGrid=expand.grid(C=c(0.01), degree=c(2), scale=c(1))
+#              )
+# 
+# varImp(psvm)
+# plot(varImp(psvm))
 ```
 
 ```{r xgboost}

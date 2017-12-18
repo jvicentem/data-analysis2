@@ -33,5 +33,14 @@ fold_4 <- list(train = train_set[-folds_indexes$Fold4,], valid = train_set[folds
 fold_5 <- list(train = train_set[-folds_indexes$Fold5,], valid = train_set[folds_indexes$Fold5,])
 
 test_set <- complete(pmm_imp, action = 2)[-train_index,]
+
+test_index <- createDataPartition(test_set$quality, 
+                                  p = .5, 
+                                  list = FALSE, 
+                                  times = 1)
+
+dev_test <- test_set[test_index,]
+  
+actual_test <- test_set[-test_index,]
 ```
 
