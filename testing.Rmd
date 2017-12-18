@@ -7,8 +7,6 @@ output: html_document
 
 ```{r setup, include=FALSE}
 library(caret)
-
-load('./workspaceData.RData')
 ```
 
 ```{r testing-models}
@@ -48,6 +46,7 @@ There's a huge gap between test and train metrics for the Random Forest and XGBo
 On the other hand, they seem to be the best models. 
 
 In modeling.Rmd you can see a report of each fold. Here you can see error metrics for every model as a whole (training cases).
+
 
 Linear SVM seems to have a high bias problem.
 
