@@ -1,7 +1,7 @@
 ---
-title: "modeling"
+title: "Modeling classes"
 author: "jvicentem"
-date: "12 August 2017"
+date: "19 de diciembre de 2017"
 output: html_document
 ---
 
@@ -11,7 +11,7 @@ library(tidyverse)
 library(caret)
 
 library(doMC)
-registerDoMC(cores = 4)
+registerDoMC(cores = detectCores(all.tests = FALSE, logical = TRUE))
 
 library(parallel)
 
@@ -20,46 +20,27 @@ library(rattle)
 library(rpart.plot)
 
 library(dummies)
+
+#devtools::install_github("ujjwalkarn/xda")
 ```
 
+```{r train-with-quality-as-factors}
+train_set_classes <- train_set %>%
+                      mutate(quality = as.factor(quality))
+```
+
+
+```{r classes-eda}
+as.data.frame(table(Quality = train_set_classes$quality))
+as.data.frame(prop.table(table(Quality = train_set_classes$quality)))
+
+histogram(train_set_classes$quality)
+
+xda::charSummary(train_set_classes %>% select(quality))
+```
+
+
 ```{r cart}
-# trControl <- trainControl(method = 'cv', number = 5)
-# 
-# fit.rpart1 <- train(y = train_set_1$quality,
-#                     x = train_set_1 %>% select(-quality),
-#                     method='rpart', 
-#                     trControl=trControl, 
-#                     metric='RMSE', 
-#                     maximize=FALSE, 
-#                     preProcess=c('center','scale'))
-# 
-# fit.rpart2 <- train(y = train_set_2$quality,
-#                     x = train_set_2 %>% select(-quality),
-#                     method='rpart', 
-#                     trControl=trControl, 
-#                     metric='RMSE', 
-#                     maximize=FALSE, 
-#                     preProcess=c('center','scale'))
-# 
-# fit.rpart3 <- train(y = train_set_3$quality,
-#                     x = train_set_3 %>% select(-quality),
-#                     method='rpart', 
-#                     trControl=trControl, 
-#                     metric='RMSE', 
-#                     maximize=FALSE, 
-#                     preProcess=c('center','scale'))
-# 
-# with(pmm_imp, train(form = quality ~ `fixed acidity` + `volatile acidity` + `citric acid` + `residual sugar` + `chlorides` + `free sulfur dioxide` + 
-#                     `density` + `pH` + `sulphates` + `alcohol` + `wine_colour` + `other sulfur dioxide`,
-#                     data = pmm_imp,
-#                     method='rpart', 
-#                     trControl=trControl, 
-#                     metric='RMSE', 
-#                     maximize=FALSE, 
-#                     preProcess=c('center','scale')))
-
-# Well, it seems I can't train 3 different dataset with 3 different 'other sulfur dioxide' imputed values and get a "pooled" tree by using pool function from mice library so I'm gonna stick with the set I used to perform PCA.
-
 all_indexes <- 1:nrow(train_set)
 
 mean_median_errors <- function(folds_errors) {
@@ -80,7 +61,7 @@ mean_median_errors <- function(folds_errors) {
   print(paste('Median:', median(folds_errors$MAE)))  
 }
 
-rpart_with_folds <- function(train_df) {
+rpart_with_folds_cl <- function(train_df) {
   # Best cp: 0.005
   # tr <- train(y = train_df$quality,
   #       x = train_df %>% select(-quality),
@@ -533,5 +514,3 @@ xgb <- train(y=svm_train_set$quality,
 varImp(xgb)
 plot(varImp(xgb))
 ```
-
-I've removed the less important variables from almost every model to make them more parsimonious and improve the training times having in mind the penalization in prediction this takes. 
