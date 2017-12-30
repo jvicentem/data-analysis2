@@ -21,16 +21,31 @@ library(rpart.plot)
 
 library(dummies)
 
+library(mice)
+
 #devtools::install_github("ujjwalkarn/xda")
 ```
 
 ```{r train-with-quality-as-factors}
 train_set_classes <- train_set %>%
                       mutate(quality = as.factor(quality))
+
+whole_data_classes <- complete(pmm_imp, action = 2) %>% 
+                        mutate(quality = as.factor(quality)) %>% 
+                        select(quality)
 ```
 
 
 ```{r classes-eda}
+as.data.frame(table(Quality = whole_data_classes$quality))
+as.data.frame(prop.table(table(Quality = whole_data_classes$quality)))
+
+histogram(whole_data_classes$quality)
+
+xda::charSummary(whole_data_classes %>% select(quality))
+```
+
+```{r classes-eda-only-train}
 as.data.frame(table(Quality = train_set_classes$quality))
 as.data.frame(prop.table(table(Quality = train_set_classes$quality)))
 
@@ -39,6 +54,57 @@ histogram(train_set_classes$quality)
 xda::charSummary(train_set_classes %>% select(quality))
 ```
 
+In order to make all classes have the same number of observations I would bind the classes 3, 4 and 5 together (class C), then class 6 (class B) and finally create a new class that contains classes 7, 8 and 9 (class A). So now the problem is a multiclass problem with 3 classes. After that I think applying an under-sampling method would make the number of observations in each class the same.
+
+However, I have some questions about this: Would that make sense from a wine expert point of view? Are wines rated 3 or 4 as bad as wines rated 5? Are wines rated 7 as good as wines rated 8 or 9? 
+
+These questions show me the importance of expertise in the domain you are working on and in the domain of the problem you're trying to solve. Since the purpose of this project is to learn and train my data science skills, I'll go on assuming the binding of classes I did makes sense.
+
+```{r solving-unbalanced-classes}
+train_set_classes_balanced <- train_set_classes
+
+train_set_classes_balanced$quality <- as.numeric(as.character(train_set_classes_balanced$quality))
+
+train_set_classes_balanced <- train_set_classes_balanced %>% 
+                                mutate(b_qual = ifelse(quality >= 3 & quality <= 5, 'C', ifelse(quality == 6, 'B', 'A')))
+
+train_set_classes_balanced$b_qual <- as.factor(train_set_classes_balanced$b_qual)
+                                
+# Showing frequencies and histogram
+as.data.frame(table(Quality = train_set_classes_balanced$b_qual))
+histogram(train_set_classes_balanced$b_qual)
+
+# Performing under-sampling
+minority_class_obs <- nrow(train_set_classes_balanced %>% filter(b_qual == 'A'))
+
+random_class_B_indexes <- sample(which(train_set_classes_balanced$b_qual == 'B'), minority_class_obs, replace=TRUE)
+
+random_class_C_indexes <- sample(which(train_set_classes_balanced$b_qual == 'C'), minority_class_obs, replace=TRUE)
+
+train_set_classes_balanced <- rbind(train_set_classes_balanced[random_class_B_indexes,] , 
+                                    rbind(train_set_classes_balanced[random_class_C_indexes,] ,
+                                          train_set_classes_balanced %>% filter(b_qual == 'A')
+                                          )  
+                                    )
+
+# Showing frequencies and histogram again
+as.data.frame(table(Quality = train_set_classes_balanced$b_qual))
+histogram(train_set_classes_balanced$b_qual)
+```
+
+The three classes are balanced now. Please have in mind we've lost 2133 observations and it's very likely we've lost valuable observations. Maybe we should generate a set of balanced datasets and stick with the one which shows better performance in the models. There are other unbalancing techniques which aim to balance classes in a smart way. I used some of these techniques in this project https://github.com/jvicentem/phishing-website-detection. 
+
+For now, we're gonna stick with the simple under-sampling method in this project.
+
+
+I've just realised the bining I did might be awful: a wine could be correctly classified as class A or C but we don't know its exact quality class, so maybe we are classifying wines with an error up to 2 units, and remember the regression models we used previously, thogh it might not be the right approach, the errors in dev set were between 0.6 and 0.8.
+
+Before going on to training the models I'd like to use k-means in order to see how this algorithm clusters the observations and hopefully cand help me to find a better way to group the observations.
+
+
+
+
+Oh, the following chunks belong to the regression part I did previously. I copied and pasted since most of the code I'm gonna use in this classification problem will be the same so do me a favour and ignore them for a while until I have some free time to work on the models :)
 
 ```{r cart}
 all_indexes <- 1:nrow(train_set)
