@@ -23,6 +23,9 @@ library(dummies)
 
 library(mice)
 
+library(NbClust)
+
+library(fpc) 
 #devtools::install_github("ujjwalkarn/xda")
 ```
 
@@ -101,7 +104,26 @@ I've just realised the bining I did might be awful: a wine could be correctly cl
 
 Before going on to training the models I'd like to use k-means in order to see how this algorithm clusters the observations and hopefully cand help me to find a better way to group the observations.
 
+```{r k-means-clustering-1}
+# Let's use NbClust to determine the optimal number of clusters
+seed <- 2060786142
+set.seed(seed)
 
+normalize <- function(x) (x-min(x))/(max(x) - min(x))
+
+nbc_results <- NbClust(data = whole_data %>% select(-wine_colour) %>% mutate_all(funs(normalize)), distance = "euclidean", min.nc = 2, max.nc = 10, method = "kmeans", index = "all")
+```
+
+```{r k-means-clustering-2}
+# Go on coding in this chunk becase I don't want to lose the NbClust output (it takes some time to finish)
+
+kmeans_result <- kmeans(whole_data %>% select(-wine_colour) %>% mutate_all(funs(normalize)), 3, algorithm = "Hartigan-Wong", trace=FALSE)
+
+plotcluster(whole_data %>% select(-wine_colour) %>% mutate_all(funs(normalize)), kmeans_result$cluster)
+
+```
+
+Having in mind we're using discriminant components to visualize the clusters in 2D, it doesn't look bad. I'm gonna explore the data which belongs to each of the clusters to see if I can still predict wine quality by using classification models. My gut says I'm gonna have the same problem as above: by binding many quality classes my prediction will be less accurate than using the regression approach. But we'll see... In that case I'd try to predict the wine colour.
 
 
 Oh, the following chunks belong to the regression part I did previously. I copied and pasted since most of the code I'm gonna use in this classification problem will be the same so do me a favour and ignore them for a while until I have some free time to work on the models :)
